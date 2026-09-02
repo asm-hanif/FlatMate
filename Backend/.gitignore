@@ -1,10 +1,13 @@
 node_modules/
 .env
+.env.*
 uploads/images/*
 uploads/profiles/*
 uploads/videos/*
 !uploads/images/.gitkeep
 !uploads/profiles/.gitkeep
 !uploads/videos/.gitkeep
-ai/model/trained-weights.json
+ai/model/*.json
+!ai/model/.gitkeep
 *.log
+npm-debug.log*

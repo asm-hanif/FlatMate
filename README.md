@@ -1,8 +1,14 @@
 # FlatMate
 
-FlatMate is a property marketplace built with HTML/CSS/JavaScript, Node.js/Express,
-PostgreSQL, Gmail SMTP, and a self-contained AI price/flat advisor with a friendly
-chat assistant ("Mira").
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-FlatMate-181717?logo=github)](https://github.com/asm-hanif/FlatMate)
+
+FlatMate is a full-stack property marketplace for finding, listing, and managing flats.
+It includes a browsable property platform, user/owner accounts, request management,
+email notifications, and an embedded AI assistant called "Mira" that can suggest
+pricing and match listings based on user preferences.
 
 ## Project structure
 
@@ -109,6 +115,29 @@ Frontend and Backend can run two ways:
 That's it — every existing `fetch('/api/...')` call and every uploaded-image
 URL in the Frontend is rewritten automatically at runtime by `config.js`, so
 no other Frontend files need touching when you deploy.
+
+## Branch workflow
+
+For future updates, use a simple Git flow:
+
+- `main` = stable production-ready branch
+- `feature/<short-name>` = new feature work
+- `fix/<short-name>` = bug fixes and patches
+- `hotfix/<short-name>` = urgent production fixes
+
+Example workflow:
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/property-search-ui
+git add .
+git commit -m "Add property search improvements"
+git push -u origin feature/property-search-ui
+```
+
+When work is ready, open a pull request into `main`, review the diff, and merge after validation.
+See [BRANCH_WORKFLOW.md](BRANCH_WORKFLOW.md) for the full team workflow.
 
 ## Features
 - User and Owner accounts, with **auto-login right after registration** —
