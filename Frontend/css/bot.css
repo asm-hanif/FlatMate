@@ -1,0 +1,390 @@
+/* ============================================================
+   FLATMATE AI ASSISTANT — floating chat widget
+   Uses the same design tokens as style.css so it always matches
+   whichever page it's dropped into.
+============================================================ */
+
+#fm-bot-launcher {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 9998;
+
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    background: linear-gradient(135deg, var(--color-primary, #252824), var(--color-accent, #6C7C69));
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,0.18));
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#fm-bot-launcher::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(37, 40, 36, 0.35);
+    animation: fmBotPulse 2.6s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes fmBotPulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 40, 36, 0.35); }
+    70% { box-shadow: 0 0 0 14px rgba(37, 40, 36, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 40, 36, 0); }
+}
+
+#fm-bot-launcher:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.24);
+}
+
+#fm-bot-launcher .fm-bot-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #c0392b;
+    border: 2px solid #fff;
+    display: none;
+}
+
+#fm-bot-launcher.fm-bot-has-alert .fm-bot-badge {
+    display: block;
+}
+
+#fm-bot-panel {
+    position: fixed;
+    right: 22px;
+    bottom: 92px;
+    z-index: 9999;
+
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    height: 560px;
+    max-height: calc(100vh - 140px);
+
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md, 0 10px 40px rgba(0,0,0,0.2));
+    border: 1px solid var(--color-border, #DEDED7);
+
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+
+    font-family: var(--font-sans, sans-serif);
+}
+
+#fm-bot-panel.fm-bot-open {
+    display: flex;
+    animation: fmBotFadeIn 0.18s ease;
+}
+
+@keyframes fmBotFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fm-bot-header {
+    background: linear-gradient(135deg, var(--color-primary, #252824), #3a4038);
+    color: #fff;
+    padding: 14px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.fm-bot-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.fm-bot-header-title .fm-bot-avatar {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-accent, #6C7C69), var(--color-primary, #252824));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
+}
+
+.fm-bot-online-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #4ade80;
+    border: 2px solid var(--color-primary, #252824);
+}
+
+.fm-bot-header-sub {
+    font-size: 11.5px;
+    opacity: 0.75;
+    font-weight: 400;
+    margin-top: 1px;
+}
+
+.fm-bot-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    opacity: 0.85;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px;
+}
+
+.fm-bot-close:hover { opacity: 1; }
+
+.fm-bot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--color-bg, #F7F6F1);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fm-bot-msg {
+    max-width: 86%;
+    padding: 10px 13px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.fm-bot-msg.fm-bot-msg-bot {
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid var(--color-border, #DEDED7);
+    border-bottom-left-radius: 3px;
+    color: var(--color-text, #1e1e1e);
+}
+
+.fm-bot-msg.fm-bot-msg-user {
+    align-self: flex-end;
+    background: var(--color-primary, #252824);
+    color: #fff;
+    border-bottom-right-radius: 3px;
+}
+
+.fm-bot-typing {
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+    padding: 10px 13px;
+    background: #fff;
+    border: 1px solid var(--color-border, #DEDED7);
+    border-radius: 12px;
+    border-bottom-left-radius: 3px;
+}
+
+.fm-bot-typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent, #6C7C69);
+    animation: fmBotTyping 1.1s infinite ease-in-out;
+}
+
+.fm-bot-typing span:nth-child(2) { animation-delay: 0.15s; }
+.fm-bot-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fmBotTyping {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.fm-bot-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    align-self: flex-start;
+    max-width: 100%;
+}
+
+.fm-bot-chip {
+    background: #fff;
+    border: 1px solid var(--color-primary, #252824);
+    color: var(--color-primary, #252824);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.fm-bot-chip:hover {
+    background: var(--color-primary, #252824);
+    color: #fff;
+}
+
+.fm-bot-chip.fm-bot-chip-ghost {
+    border-color: var(--color-border, #DEDED7);
+    color: var(--color-accent, #6C7C69);
+}
+
+.fm-bot-chip.fm-bot-chip-ghost:hover {
+    background: var(--color-bg-secondary, #E9EAE4);
+    color: var(--color-text, #1e1e1e);
+}
+
+/* Result / suggestion cards inside the conversation */
+.fm-bot-card {
+    align-self: stretch;
+    background: #fff;
+    border: 1px solid var(--color-border, #DEDED7);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+}
+
+.fm-bot-card + .fm-bot-card { margin-top: -4px; }
+
+.fm-bot-card-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    color: var(--color-text, #1e1e1e);
+}
+
+.fm-bot-card-price {
+    font-family: var(--font-serif, serif);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--color-primary, #252824);
+    margin: 4px 0;
+}
+
+.fm-bot-card-range {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.fm-bot-card-note {
+    font-size: 12px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.fm-bot-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+}
+
+.fm-bot-tag.fm-bot-tag-bargain { background: #dcfce7; color: #166534; }
+.fm-bot-tag.fm-bot-tag-fair { background: #e0e7ff; color: #3730a3; }
+.fm-bot-tag.fm-bot-tag-above-market { background: #fee2e2; color: #991b1b; }
+
+.fm-bot-card-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--color-primary, #252824);
+    text-decoration: underline;
+}
+
+.fm-bot-error {
+    align-self: center;
+    font-size: 12.5px;
+    color: #991b1b;
+    background: #fee2e2;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.fm-bot-footer {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    border-top: 1px solid var(--color-border, #DEDED7);
+    display: flex;
+    gap: 8px;
+    background: #fff;
+}
+
+.fm-bot-footer input {
+    flex: 1;
+    border: 1px solid var(--color-border, #DEDED7);
+    border-radius: 999px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}
+
+.fm-bot-footer input:focus {
+    border-color: var(--color-primary, #252824);
+}
+
+.fm-bot-footer button {
+    background: var(--color-primary, #252824);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.fm-bot-footer button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    #fm-bot-panel {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        bottom: 84px;
+    }
+
+    #fm-bot-launcher {
+        right: 16px;
+        bottom: 16px;
+    }
+}

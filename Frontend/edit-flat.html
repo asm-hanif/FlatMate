@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>List a Property — FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+                <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+                    <div class="navbar-actions" id="navbarActions"></div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top: 120px;">
+        <div class="container" style="max-width:800px;">
+            <h1 style="font-family:var(--font-serif);">List Your Property</h1>
+            <p style="margin-bottom:2rem;">Fill in the details below to list your property on FlatMate.</p>
+            <form id="editFlatForm" enctype="multipart/form-data">
+                <!-- Basic Info -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Listing Title *</label>
+                        <input type="text" name="Title" required placeholder="e.g. Modern 3BR Apartment" />
+                    </div>
+                    <div class="form-group">
+                        <label>Purpose *</label>
+                        <select name="Purpose" required>
+                            <option value="Rent">Rent</option>
+                            <option value="Sale">Sale</option>
+                            <option value="Rent & Sale">Rent & Sale</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="Description" rows="4" placeholder="Describe your property..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Property Type *</label>
+                        <select name="PropertyType" required>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Duplex">Duplex</option>
+                            <option value="Penthouse">Penthouse</option>
+                            <option value="Studio">Studio</option>
+                            <option value="House">House</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Office">Office</option>
+                            <option value="Shop">Shop</option>
+                            <option value="Building">Building</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price * (BDT)</label>
+                        <input type="number" name="Price" required placeholder="e.g. 65000" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Rent Period (if rent)</label>
+                    <select name="RentPeriod">
+                        <option value="">Select</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="Negotiable">Negotiable</option>
+                    </select>
+                </div>
+
+                <!-- Property Summary -->
+                <h3 style="margin:2rem 0 1rem;">Property Summary</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Construction Status</label>
+                        <select name="ConstructionStatus">
+                            <option value="">Select</option>
+                            <option value="Ready">Ready</option>
+                            <option value="Under Construction">Under Construction</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Transaction Type</label>
+                        <select name="TransactionType">
+                            <option value="">Select</option>
+                            <option value="New">New</option>
+                            <option value="Resale">Resale</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Facing</label>
+                        <select name="Facing">
+                            <option value="">Select</option>
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                            <option value="North-East">North-East</option>
+                            <option value="North-West">North-West</option>
+                            <option value="South-East">South-East</option>
+                            <option value="South-West">South-West</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Floor Available On</label>
+                        <input type="text" name="FloorAvailableOn" placeholder="e.g. Any Floor, 3rd Floor, Ground Floor" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Security Deposit (BDT)</label>
+                        <input type="number" name="SecurityDeposit" min="0" placeholder="e.g. 65000 (leave blank if none)" />
+                    </div>
+                    <div class="form-group"><label>Land Area (leave blank if N/A)</label>
+                        <div style="display:flex; gap:0.5rem;">
+                            <input type="number" name="LandArea" step="0.01" placeholder="e.g. 5" style="flex:1;" />
+                            <select name="LandAreaUnit" style="flex:0 0 110px;">
+                                <option value="">Unit</option>
+                                <option value="sq ft">sq ft</option>
+                                <option value="sq m">sq m</option>
+                                <option value="katha">katha</option>
+                                <option value="decimal">decimal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specifications -->
+                <h3 style="margin:2rem 0 1rem;">Specifications</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Bedrooms</label><input type="number" name="Bedrooms" min="0" /></div>
+                    <div class="form-group"><label>Bathrooms</label><input type="number" name="Bathrooms" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Balconies</label><input type="number" name="Balconies" min="0" /></div>
+                    <div class="form-group"><label>Parking Spaces (garage)</label><input type="number" name="Parking" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Covered Parking Spaces</label><input type="number" name="CoveredParking" min="0" /></div>
+                    <div class="form-group"><label>Living Rooms</label><input type="number" name="LivingRooms" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Dining Rooms</label><input type="number" name="DiningRooms" min="0" /></div>
+                    <div class="form-group"><label>Kitchen</label><input type="number" name="Kitchen" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Servant Rooms</label><input type="number" name="ServantRooms" min="0" /></div>
+                    <div class="form-group"><label>Store Rooms</label><input type="number" name="StoreRooms" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Floor</label><input type="number" name="Floor" min="0" /></div>
+                    <div class="form-group"><label>Total Floors</label><input type="number" name="TotalFloors" min="0" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Property Size</label><input type="number" name="Area" step="0.01" placeholder="e.g. 1200" /></div>
+                    <div class="form-group"><label>Size Unit</label>
+                        <select name="AreaUnit">
+                            <option value="sq ft">sq ft</option>
+                            <option value="sq m">sq m</option>
+                            <option value="katha">katha</option>
+                            <option value="decimal">decimal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Furnishing -->
+                <div class="form-group">
+                    <label>Furnishing</label>
+                    <select name="Furnished">
+                        <option value="">Select</option>
+                        <option value="Unfurnished">Unfurnished</option>
+                        <option value="Semi-furnished">Semi-furnished</option>
+                        <option value="Fully furnished">Fully furnished</option>
+                    </select>
+                </div>
+
+                <!-- Property Features (checkboxes) -->
+                <h3 style="margin:2rem 0 1rem;">Property Features</h3>
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(190px,1fr)); gap:0.5rem;">
+                    <label><input type="checkbox" name="MosquePrayerRoom" value="true" /> Mosque/Prayer Room</label>
+                    <label><input type="checkbox" name="Security" value="true" /> Security</label>
+                    <label><input type="checkbox" name="Lift" value="true" /> Lift</label>
+                    <label><input type="checkbox" name="FireExit" value="true" /> Fire Exit</label>
+                    <label><input type="checkbox" name="WASAConnection" value="true" /> WASA Connection</label>
+                    <label><input type="checkbox" name="SelfWaterSupply" value="true" /> Self Water Supply</label>
+                    <label><input type="checkbox" name="HotWater" value="true" /> Hot Water</label>
+                    <label><input type="checkbox" name="CylinderGas" value="true" /> Cylinder Gas</label>
+                    <label><input type="checkbox" name="Electricity" value="true" /> Electricity</label>
+                    <label><input type="checkbox" name="Generator" value="true" /> Generator</label>
+                    <label><input type="checkbox" name="TelephoneLine" value="true" /> Telephone Line</label>
+                    <label><input type="checkbox" name="Intercom" value="true" /> Intercom</label>
+                    <label><input type="checkbox" name="CCTV" value="true" /> CCTV</label>
+                    <label><input type="checkbox" name="WifiConnectivity" value="true" /> Wi-Fi Connectivity</label>
+                    <label><input type="checkbox" name="SecurityAlarmSystem" value="true" /> Security Alarm System</label>
+                    <label><input type="checkbox" name="CableTV" value="true" /> Satellite / Cable TV</label>
+                    <label><input type="checkbox" name="ElectronicSecurity" value="true" /> Electronic Security</label>
+                    <label><input type="checkbox" name="SwimmingPool" value="true" /> Swimming Pool</label>
+                    <label><input type="checkbox" name="Gym" value="true" /> Gymnasium</label>
+                    <label><input type="checkbox" name="Garden" value="true" /> Garden</label>
+                    <label><input type="checkbox" name="SolarPanels" value="true" /> Solar Panels</label>
+                    <label><input type="checkbox" name="GuestParking" value="true" /> Guest Parking</label>
+                    <label><input type="checkbox" name="ServantQuarter" value="true" /> Servant Room</label>
+                    <label><input type="checkbox" name="ServantToilet" value="true" /> Servant Toilet</label>
+                    <label><input type="checkbox" name="FireProtection" value="true" /> Fire Protection</label>
+                    <label><input type="checkbox" name="DepartmentalStore" value="true" /> Departmental Store</label>
+                    <label><input type="checkbox" name="AirConditioning" value="true" /> Air Conditioning</label>
+                    <label><input type="checkbox" name="Heating" value="true" /> Heating</label>
+                    <label><input type="checkbox" name="CommunityHall" value="true" /> Community Hall</label>
+                    <label><input type="checkbox" name="Rooftop" value="true" /> Rooftop</label>
+                    <label><input type="checkbox" name="Playground" value="true" /> Playground</label>
+                    <label><input type="checkbox" name="PetFriendly" value="true" /> Pet Friendly</label>
+                    <label><input type="checkbox" name="Laundry" value="true" /> Laundry</label>
+                    <label><input type="checkbox" name="Water" value="true" /> Water Supply</label>
+                    <label><input type="checkbox" name="Gas" value="true" /> Gas Line</label>
+                    <label><input type="checkbox" name="Internet" value="true" /> Internet</label>
+                    <label><input type="checkbox" name="Guard" value="true" /> Guard</label>
+                </div>
+
+                <!-- Location -->
+                <h3 style="margin:2rem 0 1rem;">Location</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Area / Neighborhood</label><input type="text" name="AreaName" placeholder="e.g. Khulshi" /></div>
+                    <div class="form-group"><label>Address</label><input type="text" name="Address" placeholder="House #, Road #" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>City</label><input type="text" name="City" placeholder="e.g. Chattogram" /></div>
+                    <div class="form-group"><label>District</label><input type="text" name="District" placeholder="e.g. Chattogram" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Latitude</label><input type="text" name="Latitude" placeholder="e.g. 22.3568" /></div>
+                    <div class="form-group"><label>Longitude</label><input type="text" name="Longitude" placeholder="e.g. 91.7832" /></div>
+                </div>
+
+                <!-- Media -->
+                <h3 style="margin:2rem 0 1rem;">Photos & Video</h3>
+                <div class="form-group" id="existingMediaGroup" style="display:none;">
+                    <label>Current Photos &amp; Video <span style="font-weight:400; color:#6b7280;">(click × to remove)</span></label>
+                    <div id="existingMediaGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap:0.75rem; margin-top:0.5rem;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Add New Images (max 15)</label>
+                    <input type="file" name="images" accept="image/*" multiple />
+                </div>
+                <div class="form-group">
+                    <label>Add / Replace Video (optional)</label>
+                    <input type="file" name="video" accept="video/*" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Publish Property</button>
+                <a href="/owner-dashboard.html" class="btn btn-outline" style="margin-left:0.5rem;">Cancel</a>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">FLATMATE</a>
+                    <p class="footer-desc">Find your perfect place, make it home. A curated property marketplace for modern living.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Owners</h4>
+                    <ul>
+                        <li><a href="/edit-flat.html">List a Property</a></li>
+                        <li><a href="/owner-dashboard.html">My Properties</a></li>
+                        <li><a href="/profile.html">Owner Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FlatMate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Images the owner has marked for removal (populated by renderExistingMedia below).
+        let removedImageIds = [];
+
+        // Handle flat form submission
+        const editFlatForm = document.getElementById('editFlatForm');
+        const submitBtn = editFlatForm.querySelector('button[type="submit"]');
+
+        editFlatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            // FormData omits unchecked checkboxes. Explicitly send false so
+            // editing a property can turn an amenity off.
+            this.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+                if (!checkbox.checked) {
+                    formData.append(checkbox.name, 'false');
+                }
+            });
+
+            if (removedImageIds.length) {
+                formData.append('removeImageIds', JSON.stringify(removedImageIds));
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const flatId = urlParams.get('id');
+            const isEdit = !!flatId;
+            const endpoint = isEdit ? `/api/flats/${flatId}` : '/api/flats';
+
+            const originalBtnText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = isEdit ? 'Saving...' : 'Publishing...';
+            }
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    body: formData
+                    // No Content-Type header — the browser sets the multipart boundary itself.
+                });
+
+                let result = {};
+                try {
+                    result = await res.json();
+                } catch (_) {
+                    // Non-JSON response (e.g. an upstream proxy error page) — fall through
+                    // to the generic error message below instead of throwing.
+                }
+
+                if (res.ok) {
+                    showToast(isEdit ? 'Property updated!' : 'Property published!');
+                    window.location.href = '/owner-dashboard.html';
+                    return;
+                }
+
+                showToast(result.error || result.details || `Failed to save (HTTP ${res.status}).`, 'error');
+
+            } catch (err) {
+                showToast('Network error — please check your connection and try again.', 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalBtnText;
+                }
+            }
+        });
+
+        function renderExistingMedia(mediaList) {
+            const group = document.getElementById('existingMediaGroup');
+            const grid = document.getElementById('existingMediaGrid');
+            if (!mediaList.length) return;
+
+            group.style.display = '';
+            grid.innerHTML = '';
+
+            mediaList.forEach((item) => {
+                const isVideo = item.MediaType === 'video';
+                const url = typeof fmUrl === 'function' ? fmUrl(item.Url) : item.Url;
+
+                const cell = document.createElement('div');
+                cell.style.cssText = 'position:relative; border-radius:8px; overflow:hidden; border:1px solid var(--color-border,#DEDED7); aspect-ratio:1; background:#000;';
+                cell.dataset.mediaId = item.Id;
+
+                cell.innerHTML = isVideo
+                    ? `<video src="${url}" style="width:100%; height:100%; object-fit:cover;" muted></video>
+                       <span style="position:absolute; bottom:4px; left:4px; background:rgba(0,0,0,0.6); color:#fff; font-size:10px; padding:2px 6px; border-radius:4px;">VIDEO</span>`
+                    : `<img src="${url}" alt="Property photo" style="width:100%; height:100%; object-fit:cover;" />`;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.setAttribute('aria-label', 'Remove this photo');
+                removeBtn.textContent = '×';
+                removeBtn.style.cssText = 'position:absolute; top:4px; right:4px; width:24px; height:24px; border-radius:50%; border:none; background:rgba(0,0,0,0.65); color:#fff; font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;';
+
+                removeBtn.addEventListener('click', () => {
+                    const id = Number(cell.dataset.mediaId);
+                    if (cell.dataset.removed === '1') {
+                        // Undo removal
+                        removedImageIds = removedImageIds.filter(x => x !== id);
+                        cell.style.opacity = '1';
+                        cell.dataset.removed = '0';
+                        removeBtn.textContent = '×';
+                        removeBtn.style.background = 'rgba(0,0,0,0.65)';
+                    } else {
+                        removedImageIds.push(id);
+                        cell.style.opacity = '0.35';
+                        cell.dataset.removed = '1';
+                        removeBtn.textContent = '↺';
+                        removeBtn.style.background = '#c0392b';
+                        removeBtn.setAttribute('aria-label', 'Undo remove');
+                    }
+                });
+
+                cell.appendChild(removeBtn);
+                grid.appendChild(cell);
+            });
+        }
+
+        // Load existing data for edit
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const flatId = urlParams.get('id');
+            if (flatId) {
+                try {
+                    const res = await fetch(`/api/flats/${flatId}`);
+                    const flat = await res.json();
+                    // Populate form
+                    const form = document.getElementById('editFlatForm');
+                    for (let key in flat) {
+                        const input = form.querySelector(`[name="${key}"]`);
+                        if (input) {
+                            if (input.type === 'checkbox') {
+                                input.checked = flat[key] === 1 || flat[key] === true;
+                            } else {
+                                input.value = flat[key] || '';
+                            }
+                        }
+                    }
+                    // Also set checkboxes for amenities (we already map by name, but some names differ)
+                    // We'll rely on name attribute matching.
+
+                    renderExistingMedia(flat.media || []);
+                } catch (err) {
+                    showToast('Failed to load property data', 'error');
+                }
+            } else {
+                // New listing. If the AI Price Advisor bot linked here with a
+                // suggested price + the details the owner already gave it,
+                // prefill the matching fields so nothing has to be re-typed.
+                const form = document.getElementById('editFlatForm');
+                const prefillKeys = [
+                    'Purpose', 'PropertyType', 'City', 'AreaName', 'Area',
+                    'AreaUnit', 'Bedrooms', 'Bathrooms', 'Furnished'
+                ];
+                let prefilledAnything = false;
+
+                prefillKeys.forEach((key) => {
+                    const value = urlParams.get(key);
+                    if (!value) return;
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.value = value;
+                        prefilledAnything = true;
+                    }
+                });
+
+                const suggestedPrice = urlParams.get('suggestedPrice');
+                if (suggestedPrice) {
+                    const priceInput = form.querySelector('[name="Price"]');
+                    if (priceInput) {
+                        priceInput.value = suggestedPrice;
+                        prefilledAnything = true;
+                    }
+                }
+
+                if (prefilledAnything && typeof showToast === 'function') {
+                    showToast('Filled in from your AI Price Advisor conversation — feel free to adjust anything.', 'success');
+                }
+            }
+        })();
+    </script>
+    <script src="/js/bot.js"></script>
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>

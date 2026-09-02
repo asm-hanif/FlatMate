@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlatMate — Find Your Perfect Place</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <!-- Fonts and icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+<body>
+    <!-- Navbar (included via server-side include? but we'll hardcode for now, app.js will update actions) -->
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+                <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+                    <div class="navbar-actions" id="navbarActions">
+                        <!-- Rendered by app.js -->
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+            <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80');"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">CURATED LIVING &bull; FLATMATE</span>
+                <h1 class="hero-title">Find a place that<br />feels like home.</h1>
+                <p class="hero-description">Discover thoughtfully listed flats for rent and sale, from trusted owners across Bangladesh.</p>
+                <div class="search-panel" id="heroSearch">
+                    <form id="heroSearchForm" class="search-form" action="/flats.html" method="get">
+                        <div class="search-row">
+                            <div class="search-group">
+                                <label for="heroLocation"><i class="fas fa-map-pin"></i> Location</label>
+                                <input type="text" id="heroLocation" name="location" placeholder="City, area or address" />
+                            </div>
+                            <div class="search-group">
+                                <label for="heroPurpose"><i class="fas fa-tag"></i> Purpose</label>
+                                <select id="heroPurpose" name="purpose">
+                                    <option value="">Any</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Rent & Sale">Rent &amp; Sale</option>
+                                </select>
+                            </div>
+                            <div class="search-group">
+                                <label for="heroType"><i class="fas fa-building"></i> Property type</label>
+                                <select id="heroType" name="propertyType">
+                                    <option value="">Any</option>
+                                    <option value="Apartment">Apartment</option>
+                                    <option value="Duplex">Duplex</option>
+                                    <option value="Penthouse">Penthouse</option>
+                                    <option value="Studio">Studio</option>
+                                    <option value="House">House</option>
+                                    <option value="Villa">Villa</option>
+                                    <option value="Office">Office</option>
+                                    <option value="Shop">Shop</option>
+                                    <option value="Building">Building</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="search-group search-group-price">
+                                <label><i class="fas fa-dollar-sign"></i> Price range</label>
+                                <div class="price-inputs">
+                                    <input type="number" name="minPrice" placeholder="Min" min="0" />
+                                    <span>—</span>
+                                    <input type="number" name="maxPrice" placeholder="Max" min="0" />
+                                </div>
+                            </div>
+                            <div class="search-group">
+                                <label for="heroBeds"><i class="fas fa-bed"></i> Beds</label>
+                                <select id="heroBeds" name="bedrooms">
+                                    <option value="">Any</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5+">5+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <i class="fas fa-arrow-right"></i> Explore Homes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="featured-properties section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">DISCOVER</span>
+                <h2 class="section-title">Homes with character</h2>
+            </div>
+            <div class="property-grid" id="featuredGrid">
+                <!-- Rendered by flats.js -->
+                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Editorial Split -->
+    <section class="editorial-split section">
+        <div class="container-fluid">
+            <div class="split-wrapper">
+                <div class="split-image">
+                    <div class="split-image-inner" style="background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80');"></div>
+                </div>
+                <div class="split-content">
+                    <span class="split-eyebrow">THE FLATMATE APPROACH</span>
+                    <h2 class="split-title">More than a listing.<br />A better way home.</h2>
+                    <p class="split-text">We bring owners and home seekers together through a calm, transparent property experience. Every detail—from floor plan essentials to media and amenities—is made easy to explore.</p>
+                    <a href="/about.html" class="btn btn-outline">Our Story <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why FlatMate -->
+    <section class="why-flatmate section">
+        <div class="container">
+            <div class="section-header centered">
+                <span class="section-eyebrow">WHY FLATMATE</span>
+                <h2 class="section-title">Built for better living</h2>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-handshake"></i></div>
+                    <h3 class="feature-title">Owner Direct</h3>
+                    <p class="feature-text">Connect directly with verified property owners. No middlemen, no hidden fees.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-camera"></i></div>
+                    <h3 class="feature-title">See the Whole Story</h3>
+                    <p class="feature-text">Rich media, floor plans, and detailed specifications help you truly see the space.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="feature-title">Move With Confidence</h3>
+                    <p class="feature-text">Transparent pricing, verified listings, and secure requests — peace of mind included.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">FLATMATE</a>
+                    <p class="footer-desc">Find your perfect place, make it home. A curated property marketplace for modern living.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="/index.html">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Owners</h4>
+                    <ul>
+                        <li><a href="/edit-flat.html">List a Property</a></li>
+                        <li><a href="/owner-dashboard.html">My Properties</a></li>
+                        <li><a href="/profile.html">Owner Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:white">&copy; 2026 FlatMate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/flats.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/owner.js"></script>
+    <script src="/js/requests.js"></script>
+    <script src="/js/bot.js"></script>
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>

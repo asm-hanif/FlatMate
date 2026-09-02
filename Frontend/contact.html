@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact — FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+                <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+                    <div class="navbar-actions" id="navbarActions"></div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top: 120px;">
+        <div class="container" style="max-width:800px;">
+            <h1 style="font-size:3rem;">Let's talk about home.</h1>
+            <p style="font-size:1.2rem; color:#666; margin-bottom:2rem;">We'd love to hear from you. Drop us a message and we'll respond as soon as possible.</p>
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:3rem;">
+                <form id="contactForm">
+
+    <div class="form-group">
+        <label for="contactName">Name</label>
+        <input
+            type="text"
+            id="contactName"
+            name="name"
+            maxlength="100"
+            required
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="contactEmail">Email</label>
+        <input
+            type="email"
+            id="contactEmail"
+            name="email"
+            required
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="contactPhone">Phone</label>
+        <input
+            type="tel"
+            id="contactPhone"
+            name="phone"
+            maxlength="20"
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="contactSubject">Subject</label>
+        <input
+            type="text"
+            id="contactSubject"
+            name="subject"
+            maxlength="200"
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="contactMessage">Message</label>
+        <textarea
+            id="contactMessage"
+            name="message"
+            rows="5"
+            maxlength="5000"
+            required
+        ></textarea>
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+        id="contactSubmitBtn"
+    >
+        <i class="fas fa-paper-plane"></i>
+        Send Message
+    </button>
+
+</form>
+                <div>
+                    <h3>Get in touch</h3>
+                    <p><i class="fas fa-envelope"></i> hello@flatmate.com</p>
+                    <p><i class="fas fa-phone"></i> +880 1234 567890</p>
+                    <p><i class="fas fa-map-pin"></i> Dhaka, Bangladesh</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">FLATMATE</a>
+                    <p class="footer-desc">Find your perfect place, make it home. A curated property marketplace for modern living.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Owners</h4>
+                    <ul>
+                        <li><a href="/edit-flat.html">List a Property</a></li>
+                        <li><a href="/owner-dashboard.html">My Properties</a></li>
+                        <li><a href="/profile.html">Owner Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FlatMate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/contact.js"></script>
+    <script>
+        document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            showToast('Message sent! We\'ll get back to you soon.');
+            this.reset();
+        });
+    </script>
+    <script src="/js/bot.js"></script>
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>

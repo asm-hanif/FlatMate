@@ -1,0 +1,1 @@
+const express=require('express'); const router=express.Router(); const {isAuthenticated}=require('../middleware/auth'); const {listNotifications,markRead,markAllRead}=require('../controllers/notificationController'); router.use(isAuthenticated); router.get('/',listNotifications); router.put('/read-all',markAllRead); router.put('/:id/read',markRead); module.exports=router;

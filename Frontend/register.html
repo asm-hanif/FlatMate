@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+<body>
+    <div class="auth-page" style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--color-bg);">
+        <div class="auth-card" style="max-width:480px; width:100%; background:white; padding:3rem; border-radius:var(--radius); border:1px solid var(--color-border);">
+            <h1 style="font-family:var(--font-serif); font-size:2.2rem; margin-bottom:0.5rem;">Create your account</h1>
+            <p style="color:#666; margin-bottom:2rem;">One account can find homes, list properties, or do both.</p>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" required placeholder="John Doe" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" required placeholder="you@gmail.com" />
+                    <small style="color:#6b7280;">Must be a Gmail address (e.g. you@gmail.com)</small>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="regPhone" placeholder="+8801XXXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" required placeholder="••••••••" minlength="6" maxlength="16" />
+                    <small style="color:#6b7280;">6-16 characters, with at least one uppercase, one lowercase and one number</small>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="regConfirm" required placeholder="••••••••" />
+                </div>
+                <div class="form-group">
+                    <label>How will you use FlatMate?</label>
+                    <div class="role-choice-grid">
+                        <label class="role-choice"><input type="radio" name="role" value="User" checked /><span><strong>🏠 Home Seeker</strong><small>Find and request properties</small></span></label>
+                        <label class="role-choice"><input type="radio" name="role" value="Owner" /><span><strong>🔑 Property Owner</strong><small>List and manage properties</small></span></label>
+                        <label class="role-choice"><input type="radio" name="role" value="Both" /><span><strong>✨ Both</strong><small>Find homes and list properties</small></span></label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Join FlatMate</button>
+            </form>
+            <p style="margin-top:1.5rem; text-align:center; font-size:0.95rem;">
+                Already a member? <a href="/login.html" style="font-weight:600; color:var(--color-accent);">Sign In</a>
+            </p>
+        </div>
+    </div>
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="/js/config.js"></script>
+    <script src="/js/validate.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/bot.js"></script>
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>
