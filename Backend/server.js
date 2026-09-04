@@ -53,17 +53,39 @@ const configuredOrigins = (process.env.FRONTEND_URL || '')
     .map(origin => origin.trim())
     .filter(Boolean);
 
-const defaultDevOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173'];
-const allowedOrigins = [...new Set([...configuredOrigins, ...defaultDevOrigins])];
+const defaultDevOrigins = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173'
+];
+
+const allowedOrigins = [
+    ...new Set([
+        ...configuredOrigins,
+        ...defaultDevOrigins
+    ])
+];
 
 app.use(cors({
     origin(origin, callback) {
-        // Same-origin requests, curl, server-to-server calls, etc. have no Origin header.
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        console.warn(`⚠ Blocked CORS request from unrecognized origin: ${origin}`);
+
+        // Same-origin requests, curl, server-to-server calls, etc.
+        // have no Origin header.
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        console.warn(
+            `⚠ Blocked CORS request from unrecognized origin: ${origin}`
+        );
+
         return callback(new Error('Not allowed by CORS'));
     },
+
     credentials: true
 }));
 
@@ -77,6 +99,7 @@ app.use(cors({
 ============================================================ */
 
 const pgSession = require('connect-pg-simple')(session);
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(
@@ -101,9 +124,11 @@ app.use(
         cookie: {
             secure: isProduction,
             httpOnly: true,
+
             // Cross-origin (Vercel <-> Render) cookies require SameSite=None,
             // which in turn requires Secure — both true in production.
             sameSite: isProduction ? 'none' : 'lax',
+
             maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         }
     })
@@ -114,7 +139,11 @@ app.use(
    BODY PARSERS
 ============================================================ */
 
-app.use(express.json({ limit: '10mb' }));
+app.use(
+    express.json({
+        limit: '10mb'
+    })
+);
 
 app.use(
     express.urlencoded({
@@ -128,16 +157,39 @@ app.use(
    STATIC FILES
 
    The project is split into two folders:
+
      FlatMate/Frontend  -> all HTML/CSS/JS the browser loads
      FlatMate/Backend   -> this server (and user-uploaded files)
 
    User uploads (property photos/videos, avatars) are written by
    multer into Backend/uploads, so they get their own static route.
+
    Everything else (pages, styles, scripts) is served from ../Frontend.
 ============================================================ */
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: '7d' }));
+// Serve uploaded files.
+app.use(
+    '/uploads',
+    express.static(
+        path.join(__dirname, 'uploads'),
+        {
+            maxAge: '7d'
+        }
+    )
+);
 
+// IMPORTANT:
+// If an upload file does not exist, do NOT allow the request to
+// fall through to the Frontend SPA fallback below.
+// Instead return a real 404 response.
+app.use('/uploads', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Upload not found'
+    });
+});
+
+// Serve Frontend static files.
 app.use(
     express.static(
         path.join(__dirname, '..', 'Frontend')
@@ -184,9 +236,20 @@ app.use(
     require('./server/routes/contactRoutes')
 );
 
-app.use('/api/bot', require('./server/routes/botRoutes'));
-app.use('/api/notifications', require('./server/routes/notificationRoutes'));
-app.use('/api/reports', require('./server/routes/reportRoutes'));
+app.use(
+    '/api/bot',
+    require('./server/routes/botRoutes')
+);
+
+app.use(
+    '/api/notifications',
+    require('./server/routes/notificationRoutes')
+);
+
+app.use(
+    '/api/reports',
+    require('./server/routes/reportRoutes')
+);
 
 
 /* ============================================================
@@ -194,8 +257,12 @@ app.use('/api/reports', require('./server/routes/reportRoutes'));
 ============================================================ */
 
 app.get('/api/health', async (req, res) => {
+
     try {
-        await executeSql('SELECT 1 AS OK');
+
+        await executeSql(
+            'SELECT 1 AS OK'
+        );
 
         res.json({
             success: true,
@@ -238,12 +305,10 @@ app.use('/api', (req, res) => {
 
 /* ============================================================
    FRONTEND FALLBACK
-============================================================ */
 
-/*
    This allows normal frontend routes to load index.html
-   without interfering with API routes.
-*/
+   without interfering with API routes or upload routes.
+============================================================ */
 
 app.get(/.*/, (req, res) => {
 
@@ -264,13 +329,32 @@ app.get(/.*/, (req, res) => {
 ============================================================ */
 
 app.use((err, req, res, next) => {
-    console.error('Unhandled server error:', err);
-    if (res.headersSent) return next(err);
 
-    const uploadError = err && (err.code === 'LIMIT_FILE_SIZE' || err.message?.includes('Only JPG') || err.message?.includes('Only PNG') || err.message?.includes('Only video'));
-    res.status(uploadError ? 400 : 500).json({
+    console.error(
+        'Unhandled server error:',
+        err
+    );
+
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    const uploadError =
+        err &&
+        (
+            err.code === 'LIMIT_FILE_SIZE' ||
+            err.message?.includes('Only JPG') ||
+            err.message?.includes('Only PNG') ||
+            err.message?.includes('Only video')
+        );
+
+    res.status(
+        uploadError ? 400 : 500
+    ).json({
         success: false,
-        error: uploadError ? err.message : 'Internal server error.'
+        error: uploadError
+            ? err.message
+            : 'Internal server error.'
     });
 });
 
@@ -358,6 +442,7 @@ async function start() {
 
     /*
        Test PostgreSQL.
+
        The server will still start if the database
        is temporarily unavailable.
     */
@@ -366,21 +451,37 @@ async function start() {
         await testDatabaseConnection();
 
     if (!databaseReady) {
-        console.error('✗ FlatMate will NOT start because PostgreSQL is unavailable.');
+
+        console.error(
+            '✗ FlatMate will NOT start because PostgreSQL is unavailable.'
+        );
+
         process.exit(1);
     }
 
+
     try {
+
         await ensureSchema();
+
     } catch (schemaError) {
-        console.error('✗ Schema verification failed:', schemaError.message);
-        console.error('✗ FlatMate will NOT start with an unverified database schema.');
+
+        console.error(
+            '✗ Schema verification failed:',
+            schemaError.message
+        );
+
+        console.error(
+            '✗ FlatMate will NOT start with an unverified database schema.'
+        );
+
         process.exit(1);
     }
 
 
     /*
        Test email service.
+
        The server will still start if email is not
        configured correctly yet.
     */
@@ -389,12 +490,16 @@ async function start() {
         await testMailConnection();
 
     if (!mailReady) {
-        console.warn('⚠ Mail service is unavailable. The website will still run, but email features will not work until SMTP is configured.');
+
+        console.warn(
+            '⚠ Mail service is unavailable. The website will still run, but email features will not work until SMTP is configured.'
+        );
     }
 
 
     /*
        Train (or load a cached) price model.
+
        The server will still start if this fails — the price
        advisor feature just won't work until it's fixed.
     */
@@ -402,11 +507,21 @@ async function start() {
     let priceModelReady = false;
 
     try {
+
         await ensurePriceModelReady();
+
         priceModelReady = true;
+
     } catch (modelError) {
-        console.error('✗ Price model failed to train:', modelError.message);
-        console.warn('⚠ The AI price advisor will be unavailable until this is resolved.');
+
+        console.error(
+            '✗ Price model failed to train:',
+            modelError.message
+        );
+
+        console.warn(
+            '⚠ The AI price advisor will be unavailable until this is resolved.'
+        );
     }
 
 
@@ -414,46 +529,77 @@ async function start() {
        Start Express server.
     */
 
-    app.listen(PORT, () => {
+    app.listen(
+        PORT,
+        () => {
 
-        console.log('');
-        console.log(
-            `✓ FlatMate server running on http://localhost:${PORT}`
-        );
+            console.log('');
 
-        console.log(
-            `✓ API health: http://localhost:${PORT}/api/health`
-        );
+            console.log(
+                `✓ FlatMate server running on http://localhost:${PORT}`
+            );
 
-        console.log('');
+            console.log(
+                `✓ API health: http://localhost:${PORT}/api/health`
+            );
 
-        console.log(
-            `Database: ${databaseReady ? '✓ Connected' : '✗ Not connected'}`
-        );
+            console.log('');
 
-        console.log(
-            `Mail:     ${mailReady ? '✓ Connected' : '✗ Not connected'}`
-        );
+            console.log(
+                `Database: ${databaseReady ? '✓ Connected' : '✗ Not connected'}`
+            );
 
-        console.log(
-            `AI model: ${priceModelReady ? '✓ Trained & ready' : '✗ Not ready'}`
-        );
+            console.log(
+                `Mail:     ${mailReady ? '✓ Connected' : '✗ Not connected'}`
+            );
 
-        console.log('');
+            console.log(
+                `AI model: ${priceModelReady ? '✓ Trained & ready' : '✗ Not ready'}`
+            );
 
-        console.log('Available API modules:');
-        console.log('  ✓ Authentication');
-        console.log('  ✓ Properties');
-        console.log('  ✓ Profiles');
-        console.log('  ✓ Requests');
-        console.log('  ✓ Chat');
-        console.log('  ✓ Contact / Email');
-        console.log('  ✓ AI Price Advisor & Flat-Finder Bot');
+            console.log('');
 
-        console.log('');
-        console.log('==============================================');
-        console.log('');
-    });
+            console.log(
+                'Available API modules:'
+            );
+
+            console.log(
+                '  ✓ Authentication'
+            );
+
+            console.log(
+                '  ✓ Properties'
+            );
+
+            console.log(
+                '  ✓ Profiles'
+            );
+
+            console.log(
+                '  ✓ Requests'
+            );
+
+            console.log(
+                '  ✓ Chat'
+            );
+
+            console.log(
+                '  ✓ Contact / Email'
+            );
+
+            console.log(
+                '  ✓ AI Price Advisor & Flat-Finder Bot'
+            );
+
+            console.log('');
+
+            console.log(
+                '=============================================='
+            );
+
+            console.log('');
+        }
+    );
 }
 
 
@@ -464,11 +610,14 @@ async function start() {
 start().catch((error) => {
 
     console.error('');
+
     console.error(
         '✗ Failed to start FlatMate server:'
     );
 
-    console.error(error);
+    console.error(
+        error
+    );
 
     process.exit(1);
 });
