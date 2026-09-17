@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Property — FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        .report-page {
+            min-height: calc(100vh - 80px);
+            padding: 64px 20px 80px;
+            background: #f7f6f1;
+        }
+
+        .report-shell {
+            width: min(920px, 100%);
+            margin: 0 auto;
+        }
+
+        .report-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 22px;
+            color: #5f625b;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .report-back:hover { color: #1f5c4d; }
+
+        .report-card {
+            display: grid;
+            grid-template-columns: minmax(250px, .78fr) minmax(0, 1.22fr);
+            background: #fff;
+            border: 1px solid #deddd7;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 18px 55px rgba(41,42,38,.08);
+        }
+
+        .report-property {
+            padding: 34px;
+            background: #292a26;
+            color: #fff;
+        }
+
+        .report-property .eyebrow {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: .7;
+        }
+
+        .report-property h1 {
+            margin: 10px 0 18px;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 500;
+            line-height: 1.12;
+        }
+
+        .report-property-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #3b3c37;
+            margin: 22px 0;
+        }
+
+        .report-property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .report-property-meta {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .report-property-meta div {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            color: rgba(255,255,255,.82);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .report-property-meta i {
+            width: 18px;
+            margin-top: 3px;
+            opacity: .7;
+        }
+
+        .report-form-wrap { padding: 34px; }
+
+        .report-form-wrap h2 {
+            margin: 0 0 8px;
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        .report-intro {
+            margin: 0 0 26px;
+            color: #6d6f68;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .report-note {
+            display: flex;
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            border: 1px solid #e4e1d6;
+            border-radius: 10px;
+            background: #faf9f5;
+            color: #60625c;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .report-note i { color: #1f5c4d; margin-top: 2px; }
+
+        .report-field { margin-bottom: 20px; }
+
+        .report-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #292a26;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .report-field label span {
+            color: #888a83;
+            font-weight: 500;
+        }
+
+        .report-field select,
+        .report-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #d8d7d1;
+            border-radius: 9px;
+            background: #fff;
+            color: #292a26;
+            font: inherit;
+            padding: 13px 14px;
+            outline: none;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .report-field select:focus,
+        .report-field textarea:focus {
+            border-color: #1f5c4d;
+            box-shadow: 0 0 0 3px rgba(31,92,77,.1);
+        }
+
+        .report-field textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 28px;
+        }
+
+        .report-cancel {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border: 1px solid #d8d7d1;
+            border-radius: 8px;
+            color: #555750;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .report-cancel:hover { background: #f5f4ef; }
+
+        .report-submit {
+            min-height: 46px;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 20px;
+            background: #1f5c4d;
+            color: #fff;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .report-submit:hover { background: #17483c; }
+        .report-submit:disabled { opacity: .65; cursor: not-allowed; }
+
+        .report-status {
+            min-height: 20px;
+            margin-top: 16px;
+            color: #b34d3c;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .report-success {
+            text-align: center;
+            padding: 30px 10px 15px;
+        }
+
+        .report-success-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #e9f2ee;
+            color: #1f5c4d;
+            font-size: 26px;
+        }
+
+        .report-success h2 { margin-bottom: 10px; }
+        .report-success p { color: #6d6f68; line-height: 1.65; }
+
+        @media (max-width: 760px) {
+            .report-page { padding: 35px 14px 55px; }
+            .report-card { grid-template-columns: 1fr; }
+            .report-property, .report-form-wrap { padding: 25px; }
+            .report-property-image { aspect-ratio: 16 / 9; }
+            .report-actions { flex-direction: column-reverse; align-items: stretch; }
+            .report-cancel, .report-submit { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+
+                <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+
+                    <div class="navbar-actions" id="navbarActions"></div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="report-page">
+        <div class="report-shell">
+            <a class="report-back" id="reportBack" href="/flats.html">
+                <i class="fas fa-arrow-left"></i>
+                Back to property
+            </a>
+
+            <section class="report-card" id="reportCard" hidden>
+                <aside class="report-property">
+                    <div class="eyebrow">Property Report</div>
+                    <h1 id="propertyTitle">Loading property...</h1>
+
+                    <div class="report-property-image" id="propertyImageWrap" hidden>
+                        <img id="propertyImage" alt="Property" />
+                    </div>
+
+                    <div class="report-property-meta">
+                        <div><i class="fas fa-location-dot"></i><span id="propertyLocation">—</span></div>
+                        <div><i class="fas fa-tag"></i><span id="propertyPurpose">—</span></div>
+                        <div><i class="fas fa-money-bill-wave"></i><span id="propertyPrice">—</span></div>
+                    </div>
+                </aside>
+
+                <div class="report-form-wrap" id="reportFormWrap">
+                    <h2>Tell us what is wrong</h2>
+                    <p class="report-intro">
+                        Your report helps keep FlatMate safe and trustworthy. Please choose the reason that best matches the issue and add any useful details.
+                    </p>
+
+                    <div class="report-note">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Your report will be shared with the property owner and the FlatMate website team so the issue can be reviewed.</span>
+                    </div>
+
+                    <form id="reportForm">
+                        <div class="report-field">
+                            <label for="reason">Reason for reporting</label>
+                            <select id="reason" name="reason" required>
+                                <option value="" selected disabled>Select a reason</option>
+                                <option value="Fake property">Fake property</option>
+                                <option value="Scam or suspicious behavior">Scam or suspicious behavior</option>
+                                <option value="Wrong information">Wrong information</option>
+                                <option value="Duplicate listing">Duplicate listing</option>
+                                <option value="Already rented/sold">Already rented/sold</option>
+                                <option value="Inappropriate content">Inappropriate content</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="report-field">
+                            <label for="details">Additional details <span>(optional)</span></label>
+                            <textarea id="details" name="details" maxlength="2000" placeholder="Tell us what you noticed. For example, mention incorrect information, suspicious behavior, or anything that will help us review the property."></textarea>
+                        </div>
+
+                        <div class="report-actions">
+                            <a class="report-cancel" id="cancelReport" href="/flats.html">Cancel</a>
+                            <button class="report-submit" id="submitReport" type="submit">
+                                <i class="fas fa-flag"></i>
+                                Submit Report
+                            </button>
+                        </div>
+                        <div class="report-status" id="reportStatus" aria-live="polite"></div>
+                    </form>
+
+                    <div class="report-success" id="reportSuccess" hidden>
+                        <div class="report-success-icon"><i class="fas fa-check"></i></div>
+                        <h2>Report submitted</h2>
+                        <p id="successMessage">Thank you. Your report has been sent for review.</p>
+                        <a class="report-cancel" id="successBack" href="#">Return to property</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/report.js"></script>
+</body>
+</html>

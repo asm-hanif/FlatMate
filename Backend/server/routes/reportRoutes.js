@@ -1,0 +1,1 @@
+const express=require('express'); const router=express.Router(); const {isAuthenticated}=require('../middleware/auth'); const {reportFlat}=require('../controllers/reportController'); router.post('/flats/:id',isAuthenticated,reportFlat); module.exports=router;

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore Flats — FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+<body>
+    <!-- Navbar (same as index) -->
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+                <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+                    <div class="navbar-actions" id="navbarActions"></div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">PROPERTY COLLECTION</span>
+                <h2 class="section-title">Explore available flats</h2>
+                <p style="font-size:1.1rem; color:#666;">Find the right space by location, purpose and lifestyle.</p>
+            </div>
+            <div style="display:grid; grid-template-columns: 280px 1fr; gap:2rem;">
+                <!-- Filters -->
+                <aside>
+                    <form id="filterForm" style="background:white; padding:1.5rem; border-radius:var(--radius); border:1px solid var(--color-border); position:sticky; top:100px;">
+                        <h4 style="margin-bottom:1rem;">Filters</h4>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" name="location" placeholder="City, area" />
+                        </div>
+                        <div class="form-group">
+                            <label>Purpose</label>
+                            <select name="purpose">
+                                <option value="">Any</option>
+                                <option value="Rent">Rent</option>
+                                <option value="Sale">Sale</option>
+                                <option value="Rent & Sale">Rent & Sale</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Property Type</label>
+                            <select name="propertyType">
+                                <option value="">Any</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Duplex">Duplex</option>
+                                <option value="Penthouse">Penthouse</option>
+                                <option value="Studio">Studio</option>
+                                <option value="House">House</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Office">Office</option>
+                                <option value="Shop">Shop</option>
+                                <option value="Building">Building</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Bedrooms</label>
+                            <select name="bedrooms">
+                                <option value="">Any</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5+">5+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Bathrooms</label>
+                            <select name="bathrooms">
+                                <option value="">Any</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4+">4+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Min Price</label>
+                            <input type="number" name="minPrice" placeholder="Min" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Max Price</label>
+                            <input type="number" name="maxPrice" placeholder="Max" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Furnishing</label>
+                            <select name="furnishing">
+                                <option value="">Any</option>
+                                <option value="Unfurnished">Unfurnished</option>
+                                <option value="Semi-furnished">Semi-furnished</option>
+                                <option value="Fully furnished">Fully furnished</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Sort By</label>
+                            <select name="sort">
+                                <option value="Newest">Newest</option>
+                                <option value="Most Viewed">Most Viewed</option>
+                                <option value="Price: Low to High">Price: Low to High</option>
+                                <option value="Price: High to Low">Price: High to Low</option>
+                                <option value="Largest Area">Largest Area</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amenities (comma separated)</label>
+                            <input type="text" name="amenities" placeholder="e.g. Parking, Lift, Garden" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;">Apply Filters</button>
+                    </form>
+                </aside>
+                <!-- Results -->
+                <div>
+                    <div class="property-grid" id="exploreGrid">
+                        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                    </div>
+                    <div id="explorePagination" class="pagination-wrap"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">FLATMATE</a>
+                    <p class="footer-desc">Find your perfect place, make it home. A curated property marketplace for modern living.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Owners</h4>
+                    <ul>
+                        <li><a href="/edit-flat.html">List a Property</a></li>
+                        <li><a href="/owner-dashboard.html">My Properties</a></li>
+                        <li><a href="/profile.html">Owner Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FlatMate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/flats.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/owner.js"></script>
+    <script src="/js/requests.js"></script>
+    <script src="/js/bot.js"></script>
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+
+# Uploads and generated runtime files
+Backend/uploads/images/*
+Backend/uploads/profiles/*
+Backend/uploads/videos/*
+!Backend/uploads/images/.gitkeep
+!Backend/uploads/profiles/.gitkeep
+!Backend/uploads/videos/.gitkeep
+
+# Model artifacts
+Backend/ai/model/*.json
+!Backend/ai/model/.gitkeep

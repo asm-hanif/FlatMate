@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Property Detail — FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/components.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet"
+    />
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+        /* =========================================================
+           PROPERTY CHAT BUTTON
+           ========================================================= */
+
+        .property-chat-action {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .property-chat-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 48px;
+            padding: 0 22px;
+            border: 0;
+            border-radius: 8px;
+            background: #1f5c4d;
+            color: #fff;
+            font-family: "DM Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .property-chat-btn:hover {
+            background: #17483c;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 22px rgba(31, 92, 77, 0.18);
+        }
+
+        .property-chat-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* =========================================================
+           CHAT MODAL
+           ========================================================= */
+
+        .flatmate-chat-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(17, 24, 39, 0.58);
+            backdrop-filter: blur(5px);
+        }
+
+        .flatmate-chat-overlay.active {
+            display: flex;
+        }
+
+        .flatmate-chat-window {
+            width: min(920px, 100%);
+            height: min(720px, 90vh);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22);
+        }
+
+        /* Header */
+
+        .flatmate-chat-header {
+            min-height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            background: #fff;
+        }
+
+        .flatmate-chat-person {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .flatmate-chat-avatar {
+            width: 46px;
+            height: 46px;
+            flex: 0 0 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 50%;
+            background: #e9f1ee;
+            color: #1f5c4d;
+            font-size: 18px;
+        }
+
+        .flatmate-chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .flatmate-chat-person-info {
+            min-width: 0;
+        }
+
+        .flatmate-chat-person-name {
+            margin: 0;
+            color: #1b2a25;
+            font-family: "DM Sans", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .flatmate-chat-property {
+            max-width: 500px;
+            margin: 3px 0 0;
+            overflow: hidden;
+            color: #7a8581;
+            font-family: "DM Sans", sans-serif;
+            font-size: 12px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .flatmate-chat-close {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            color: #66716d;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .flatmate-chat-close:hover {
+            background: #f1f3f2;
+            color: #1b2a25;
+        }
+
+        /* Messages */
+
+        .flatmate-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background:
+                linear-gradient(
+                    rgba(249, 250, 249, 0.94),
+                    rgba(249, 250, 249, 0.94)
+                );
+            scroll-behavior: smooth;
+        }
+
+        .flatmate-chat-empty {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #7a8581;
+        }
+
+        .flatmate-chat-empty-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            border-radius: 50%;
+            background: #e9f1ee;
+            color: #1f5c4d;
+            font-size: 22px;
+        }
+
+        .flatmate-chat-empty strong {
+            margin-bottom: 6px;
+            color: #26352f;
+            font-size: 15px;
+        }
+
+        .flatmate-chat-empty span {
+            max-width: 360px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .flatmate-message-row {
+            display: flex;
+            margin-bottom: 14px;
+        }
+
+        .flatmate-message-row.mine {
+            justify-content: flex-end;
+        }
+
+        .flatmate-message-row.theirs {
+            justify-content: flex-start;
+        }
+
+        .flatmate-message {
+            max-width: min(72%, 580px);
+        }
+
+        .flatmate-message-bubble {
+            padding: 11px 14px;
+            border-radius: 14px;
+            font-family: "DM Sans", sans-serif;
+            font-size: 14px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .flatmate-message-row.mine .flatmate-message-bubble {
+            border-bottom-right-radius: 4px;
+            background: #1f5c4d;
+            color: #fff;
+        }
+
+        .flatmate-message-row.theirs .flatmate-message-bubble {
+            border-bottom-left-radius: 4px;
+            background: #fff;
+            color: #26352f;
+            border: 1px solid #e3e8e5;
+        }
+
+        .flatmate-message-time {
+            margin-top: 5px;
+            color: #9aa39f;
+            font-size: 10px;
+        }
+
+        .flatmate-message-row.mine .flatmate-message-time {
+            text-align: right;
+        }
+
+        /* Composer */
+
+        .flatmate-chat-composer {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 14px 18px;
+            border-top: 1px solid #e8e8e8;
+            background: #fff;
+        }
+
+        .flatmate-chat-input {
+            flex: 1;
+            min-height: 46px;
+            max-height: 130px;
+            resize: none;
+            padding: 13px 15px;
+            border: 1px solid #dfe5e2;
+            border-radius: 10px;
+            outline: none;
+            background: #f8faf9;
+            color: #26352f;
+            font-family: "DM Sans", sans-serif;
+            font-size: 14px;
+            line-height: 1.45;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .flatmate-chat-input:focus {
+            border-color: #1f5c4d;
+            box-shadow: 0 0 0 3px rgba(31, 92, 77, 0.08);
+            background: #fff;
+        }
+
+        .flatmate-chat-send {
+            width: 46px;
+            height: 46px;
+            flex: 0 0 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 10px;
+            background: #1f5c4d;
+            color: #fff;
+            font-size: 15px;
+            cursor: pointer;
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .flatmate-chat-send:hover {
+            background: #17483c;
+            transform: translateY(-1px);
+        }
+
+        .flatmate-chat-send:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .flatmate-chat-status {
+            min-height: 18px;
+            padding: 0 18px 8px;
+            background: #fff;
+            color: #a15c32;
+            font-size: 11px;
+        }
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (max-width: 700px) {
+            .flatmate-chat-overlay {
+                padding: 0;
+            }
+
+            .flatmate-chat-window {
+                width: 100%;
+                height: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+
+            .flatmate-chat-header {
+                min-height: 68px;
+                padding: 12px 14px;
+            }
+
+            .flatmate-chat-messages {
+                padding: 18px 14px;
+            }
+
+            .flatmate-message {
+                max-width: 84%;
+            }
+
+            .flatmate-chat-composer {
+                padding: 10px;
+            }
+
+            .flatmate-chat-property {
+                max-width: 240px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+
+<body>
+
+    <!-- =========================================================
+         NAVBAR
+         ========================================================= -->
+
+    <header class="navbar" id="mainNav">
+        <div class="container">
+            <div class="navbar-inner">
+
+                <a href="/" class="navbar-brand">
+                    <span class="brand-wordmark">FLATMATE</span>
+                    <span class="brand-tagline">PROPERTY &amp; LIVING</span>
+                </a>
+
+                <button
+                    class="navbar-toggle"
+                    id="navToggle"
+                    aria-label="Toggle navigation"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <nav class="navbar-nav" id="navbarNav">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        </ul>
+
+                    <div
+                        class="navbar-actions"
+                        id="navbarActions"
+                    ></div>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+
+
+    <!-- =========================================================
+         PROPERTY DETAILS
+         ========================================================= -->
+
+    <section
+        class="section"
+        style="padding-top: 120px;"
+    >
+        <div class="container">
+
+            <div id="flatDetail">
+
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading property...
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- =========================================================
+         CHAT OVERLAY
+         ========================================================= -->
+
+    <div
+        class="flatmate-chat-overlay"
+        id="flatmateChatOverlay"
+        aria-hidden="true"
+    >
+
+        <div
+            class="flatmate-chat-window"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="flatmateChatPersonName"
+        >
+
+            <!-- Chat Header -->
+
+            <div class="flatmate-chat-header">
+
+                <div class="flatmate-chat-person">
+
+                    <div
+                        class="flatmate-chat-avatar"
+                        id="flatmateChatAvatar"
+                    >
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <div class="flatmate-chat-person-info">
+
+                        <h3
+                            class="flatmate-chat-person-name"
+                            id="flatmateChatPersonName"
+                        >
+                            Property Owner
+                        </h3>
+
+                        <p
+                            class="flatmate-chat-property"
+                            id="flatmateChatProperty"
+                        >
+                            Property
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="flatmate-chat-close"
+                    id="flatmateChatClose"
+                    aria-label="Close chat"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Messages -->
+
+            <div
+                class="flatmate-chat-messages"
+                id="flatmateChatMessages"
+            >
+
+                <div class="flatmate-chat-empty">
+
+                    <div class="flatmate-chat-empty-icon">
+                        <i class="far fa-comments"></i>
+                    </div>
+
+                    <strong>Start a conversation</strong>
+
+                    <span>
+                        Ask the owner about availability, price,
+                        facilities, location or anything else about
+                        this property.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Status -->
+
+            <div
+                class="flatmate-chat-status"
+                id="flatmateChatStatus"
+            ></div>
+
+
+            <!-- Composer -->
+
+            <form
+                class="flatmate-chat-composer"
+                id="flatmateChatForm"
+            >
+
+                <textarea
+                    id="flatmateChatInput"
+                    class="flatmate-chat-input"
+                    rows="1"
+                    maxlength="5000"
+                    placeholder="Write a message..."
+                    autocomplete="off"
+                ></textarea>
+
+                <button
+                    type="submit"
+                    class="flatmate-chat-send"
+                    id="flatmateChatSend"
+                    aria-label="Send message"
+                >
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    <footer class="footer">
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="/" class="footer-logo">
+                        FLATMATE
+                    </a>
+
+                    <p class="footer-desc">
+                        Find your perfect place, make it home.
+                        A curated property marketplace for modern living.
+                    </p>
+
+                    <div class="footer-social">
+
+                        <a href="#" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+
+                        <a href="#" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                        <a href="#" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+
+                        <a href="#" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="footer-col">
+
+                    <h4>Explore</h4>
+
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/flats.html">Explore</a></li>
+                        </ul>
+
+                </div>
+
+
+                <div class="footer-col">
+
+                    <h4>Owners</h4>
+
+                    <ul>
+                        <li>
+                            <a href="/edit-flat.html">
+                                List a Property
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/owner-dashboard.html">
+                                My Properties
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/profile.html">
+                                Owner Account
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="footer-col">
+
+                    <h4>Support</h4>
+
+                    <ul>
+                        <li>
+                            <a href="/contact.html">
+                                Contact
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                Help
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                Privacy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">
+                                Terms
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <p>
+                    &copy; 2026 FlatMate.
+                    All rights reserved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- Toast -->
+
+    <div
+        id="toastContainer"
+        class="toast-container"
+    ></div>
+
+
+    <!-- =========================================================
+         EXISTING JAVASCRIPT
+         ========================================================= -->
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/flats.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/owner.js"></script>
+    <script src="/js/requests.js"></script>
+
+
+    <!-- =========================================================
+         CHAT JAVASCRIPT
+         ========================================================= -->
+
+    <script>
+
+        (() => {
+
+            'use strict';
+
+
+            // ====================================================
+            // STATE
+            // ====================================================
+
+            let currentUser = null;
+            let currentConversationId = null;
+            let currentFlatId = null;
+            let chatPollingTimer = null;
+            let isSendingMessage = false;
+
+
+            // ====================================================
+            // DOM
+            // ====================================================
+
+            const overlay =
+                document.getElementById('flatmateChatOverlay');
+
+            const closeButton =
+                document.getElementById('flatmateChatClose');
+
+            const chatPersonName =
+                document.getElementById('flatmateChatPersonName');
+
+            const chatProperty =
+                document.getElementById('flatmateChatProperty');
+
+            const chatAvatar =
+                document.getElementById('flatmateChatAvatar');
+
+            const messagesContainer =
+                document.getElementById('flatmateChatMessages');
+
+            const chatForm =
+                document.getElementById('flatmateChatForm');
+
+            const chatInput =
+                document.getElementById('flatmateChatInput');
+
+            const sendButton =
+                document.getElementById('flatmateChatSend');
+
+            const chatStatus =
+                document.getElementById('flatmateChatStatus');
+
+
+            // ====================================================
+            // SESSION
+            // ====================================================
+
+            async function loadCurrentUser() {
+
+                try {
+
+                    const response =
+                        await fetch('/api/auth/session', {
+                            method: 'GET',
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                    const data = await response.json();
+
+                    if (
+                        response.ok &&
+                        data.authenticated &&
+                        data.user
+                    ) {
+                        currentUser = data.user;
+                    } else {
+                        currentUser = null;
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        'Failed to load current session:',
+                        error
+                    );
+
+                    currentUser = null;
+                }
+            }
+
+
+            // ====================================================
+            // FIND FLAT ID
+            // ====================================================
+
+            function getFlatId() {
+
+                const params =
+                    new URLSearchParams(window.location.search);
+
+                const possibleIds = [
+                    params.get('id'),
+                    params.get('flatId'),
+                    params.get('propertyId')
+                ];
+
+                for (const value of possibleIds) {
+
+                    if (
+                        value !== null &&
+                        value !== '' &&
+                        Number.isInteger(Number(value))
+                    ) {
+                        return Number(value);
+                    }
+
+                }
+
+                return null;
+            }
+
+
+            // ====================================================
+            // TOAST
+            // ====================================================
+
+            function showChatToast(message, type = 'error') {
+
+                if (
+                    typeof window.showToast === 'function'
+                ) {
+                    window.showToast(message, type);
+                    return;
+                }
+
+                console[type === 'error' ? 'error' : 'log'](
+                    message
+                );
+            }
+
+
+            // ====================================================
+            // STATUS
+            // ====================================================
+
+            function setChatStatus(message = '') {
+
+                chatStatus.textContent = message;
+            }
+
+
+            // ====================================================
+            // OPEN CHAT
+            // ====================================================
+
+            async function openChat() {
+
+                if (!currentUser) {
+
+                    showChatToast(
+                        'Please log in to chat with the property owner.',
+                        'error'
+                    );
+
+                    window.location.href =
+                        '/login.html?redirect=' +
+                        encodeURIComponent(
+                            window.location.pathname +
+                            window.location.search
+                        );
+
+                    return;
+                }
+
+                if (!currentFlatId) {
+
+                    showChatToast(
+                        'Property information is unavailable.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+                // Owner cannot chat with themselves.
+                if (
+                    String(currentUser.role).toLowerCase() ===
+                    'owner'
+                ) {
+
+                    showChatToast(
+                        'Owners cannot start a chat with themselves from their own property.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+
+                document.body.style.overflow = 'hidden';
+
+                setChatStatus('Opening conversation...');
+
+                try {
+
+                    const response =
+                        await fetch(
+                            '/api/chat/conversations',
+                            {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type':
+                                        'application/json',
+                                    'Accept':
+                                        'application/json'
+                                },
+                                body: JSON.stringify({
+                                    flatId: currentFlatId
+                                })
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (!response.ok || !data.success) {
+
+                        throw new Error(
+                            data.error ||
+                            'Unable to open conversation.'
+                        );
+                    }
+
+                    currentConversationId =
+                        data.conversation.Id ||
+                        data.conversation.id;
+
+                    await loadConversationDetails();
+
+                    await loadMessages();
+
+                    await markMessagesAsRead();
+
+                    startPolling();
+
+                    chatInput.focus();
+
+                    setChatStatus('');
+
+                } catch (error) {
+
+                    console.error(
+                        'Open chat error:',
+                        error
+                    );
+
+                    setChatStatus(
+                        error.message ||
+                        'Unable to open chat.'
+                    );
+                }
+            }
+
+
+            // ====================================================
+            // CLOSE CHAT
+            // ====================================================
+
+            function closeChat() {
+
+                overlay.classList.remove('active');
+
+                overlay.setAttribute(
+                    'aria-hidden',
+                    'true'
+                );
+
+                document.body.style.overflow = '';
+
+                stopPolling();
+
+                currentConversationId = null;
+
+                setChatStatus('');
+            }
+
+
+            // ====================================================
+            // LOAD CONVERSATION DETAILS
+            // ====================================================
+
+            async function loadConversationDetails() {
+
+                if (!currentConversationId) {
+                    return;
+                }
+
+                const response =
+                    await fetch(
+                        `/api/chat/conversations/${currentConversationId}`,
+                        {
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept':
+                                    'application/json'
+                            }
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.error ||
+                        'Failed to load conversation.'
+                    );
+                }
+
+                const conversation =
+                    data.conversation;
+
+                const isOwner =
+                    Number(conversation.OwnerId) ===
+                    Number(currentUser.id);
+
+                if (isOwner) {
+
+                    chatPersonName.textContent =
+                        conversation.UserName ||
+                        'User';
+
+                    chatAvatar.innerHTML =
+                        conversation.UserAvatar
+                            ? `<img src="${escapeAttribute(fmUrl(conversation.UserAvatar))}" alt="">`
+                            : `<i class="fas fa-user"></i>`;
+
+                } else {
+
+                    chatPersonName.textContent =
+                        conversation.OwnerName ||
+                        'Property Owner';
+
+                    chatAvatar.innerHTML =
+                        conversation.OwnerAvatar
+                            ? `<img src="${escapeAttribute(fmUrl(conversation.OwnerAvatar))}" alt="">`
+                            : `<i class="fas fa-user"></i>`;
+                }
+
+                chatProperty.textContent =
+                    conversation.FlatTitle ||
+                    'Property';
+            }
+
+
+            // ====================================================
+            // LOAD MESSAGES
+            // ====================================================
+
+            async function loadMessages(
+                shouldScroll = true
+            ) {
+
+                if (!currentConversationId) {
+                    return;
+                }
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/chat/conversations/${currentConversationId}/messages`,
+                            {
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Accept':
+                                        'application/json'
+                                }
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (!response.ok || !data.success) {
+
+                        throw new Error(
+                            data.error ||
+                            'Failed to load messages.'
+                        );
+                    }
+
+                    renderMessages(
+                        data.messages || [],
+                        shouldScroll
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        'Load messages error:',
+                        error
+                    );
+
+                    setChatStatus(
+                        'Unable to refresh messages.'
+                    );
+                }
+            }
+
+
+            // ====================================================
+            // RENDER MESSAGES
+            // ====================================================
+
+            function renderMessages(
+                messages,
+                shouldScroll = true
+            ) {
+
+                if (!messages.length) {
+
+                    messagesContainer.innerHTML = `
+                        <div class="flatmate-chat-empty">
+                            <div class="flatmate-chat-empty-icon">
+                                <i class="far fa-comments"></i>
+                            </div>
+                            <strong>Start a conversation</strong>
+                            <span>
+                                Ask the owner about availability,
+                                price, facilities, location or
+                                anything else about this property.
+                            </span>
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                messagesContainer.innerHTML =
+                    messages.map(message => {
+
+                        const mine =
+                            Number(message.SenderId) ===
+                            Number(currentUser.id);
+
+                        return `
+                            <div class="flatmate-message-row ${mine ? 'mine' : 'theirs'}">
+
+                                <div class="flatmate-message">
+
+                                    <div class="flatmate-message-bubble">
+                                        ${escapeHtml(
+                                            message.MessageText || ''
+                                        )}
+                                    </div>
+
+                                    <div class="flatmate-message-time">
+                                        ${formatMessageTime(
+                                            message.CreatedAt
+                                        )}
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        `;
+
+                    }).join('');
+
+
+                if (shouldScroll) {
+                    scrollMessagesToBottom();
+                }
+            }
+
+
+            // ====================================================
+            // SEND MESSAGE
+            // ====================================================
+
+            async function sendMessage() {
+
+                if (isSendingMessage) {
+                    return;
+                }
+
+                if (!currentConversationId) {
+                    return;
+                }
+
+                const message =
+                    chatInput.value.trim();
+
+                if (!message) {
+                    return;
+                }
+
+                isSendingMessage = true;
+
+                sendButton.disabled = true;
+
+                setChatStatus('Sending...');
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/chat/conversations/${currentConversationId}/messages`,
+                            {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type':
+                                        'application/json',
+                                    'Accept':
+                                        'application/json'
+                                },
+                                body: JSON.stringify({
+                                    message
+                                })
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (!response.ok || !data.success) {
+
+                        throw new Error(
+                            data.error ||
+                            'Failed to send message.'
+                        );
+                    }
+
+                    chatInput.value = '';
+
+                    autoResizeInput();
+
+                    setChatStatus('');
+
+                    await loadMessages(true);
+
+                } catch (error) {
+
+                    console.error(
+                        'Send message error:',
+                        error
+                    );
+
+                    setChatStatus(
+                        error.message ||
+                        'Failed to send message.'
+                    );
+
+                } finally {
+
+                    isSendingMessage = false;
+
+                    sendButton.disabled = false;
+
+                    chatInput.focus();
+                }
+            }
+
+
+            // ====================================================
+            // MARK AS READ
+            // ====================================================
+
+            async function markMessagesAsRead() {
+
+                if (!currentConversationId) {
+                    return;
+                }
+
+                try {
+
+                    await fetch(
+                        `/api/chat/conversations/${currentConversationId}/read`,
+                        {
+                            method: 'PUT',
+                            credentials: 'same-origin',
+                            headers: {
+                                'Accept':
+                                    'application/json'
+                            }
+                        }
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        'Mark read error:',
+                        error
+                    );
+                }
+            }
+
+
+            // ====================================================
+            // POLLING
+            // ====================================================
+
+            function startPolling() {
+
+                stopPolling();
+
+                chatPollingTimer =
+                    setInterval(async () => {
+
+                        if (
+                            !currentConversationId ||
+                            !overlay.classList.contains('active')
+                        ) {
+                            return;
+                        }
+
+                        await loadMessages(false);
+
+                        await markMessagesAsRead();
+
+                    }, 3000);
+            }
+
+
+            function stopPolling() {
+
+                if (chatPollingTimer) {
+
+                    clearInterval(
+                        chatPollingTimer
+                    );
+
+                    chatPollingTimer = null;
+                }
+            }
+
+
+            // ====================================================
+            // HELPERS
+            // ====================================================
+
+            function scrollMessagesToBottom() {
+
+                requestAnimationFrame(() => {
+
+                    messagesContainer.scrollTop =
+                        messagesContainer.scrollHeight;
+
+                });
+            }
+
+
+            function formatMessageTime(value) {
+
+                if (!value) {
+                    return '';
+                }
+
+                const date =
+                    new Date(value);
+
+                if (
+                    Number.isNaN(date.getTime())
+                ) {
+                    return '';
+                }
+
+                return date.toLocaleString(
+                    [],
+                    {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    }
+                );
+            }
+
+
+            function escapeHtml(value) {
+
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+
+            function escapeAttribute(value) {
+
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }
+
+
+            function autoResizeInput() {
+
+                chatInput.style.height = 'auto';
+
+                chatInput.style.height =
+                    Math.min(
+                        chatInput.scrollHeight,
+                        130
+                    ) + 'px';
+            }
+
+
+            // ====================================================
+            // EVENTS
+            // ====================================================
+
+            closeButton.addEventListener(
+                'click',
+                closeChat
+            );
+
+
+            overlay.addEventListener(
+                'click',
+                (event) => {
+
+                    if (
+                        event.target === overlay
+                    ) {
+                        closeChat();
+                    }
+
+                }
+            );
+
+
+            chatForm.addEventListener(
+                'submit',
+                (event) => {
+
+                    event.preventDefault();
+
+                    sendMessage();
+
+                }
+            );
+
+
+            chatInput.addEventListener(
+                'input',
+                autoResizeInput
+            );
+
+
+            chatInput.addEventListener(
+                'keydown',
+                (event) => {
+
+                    if (
+                        event.key === 'Enter' &&
+                        !event.shiftKey
+                    ) {
+
+                        event.preventDefault();
+
+                        sendMessage();
+                    }
+
+                }
+            );
+
+
+            document.addEventListener(
+                'keydown',
+                (event) => {
+
+                    if (
+                        event.key === 'Escape' &&
+                        overlay.classList.contains('active')
+                    ) {
+                        closeChat();
+                    }
+
+                }
+            );
+
+
+            // ====================================================
+            // INITIALIZE
+            // ====================================================
+
+            async function initializeChat() {
+
+                currentFlatId =
+                    getFlatId();
+
+                if (!currentFlatId) {
+
+                    console.warn(
+                        'FlatMate chat: property ID was not found in the URL.'
+                    );
+
+                    return;
+                }
+
+                await loadCurrentUser();
+            }
+
+
+            initializeChat();
+
+        })();
+
+    </script>
+
+    <script src="/js/bot.js"></script>
+
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>

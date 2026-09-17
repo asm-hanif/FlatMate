@@ -1,0 +1,9 @@
+{
+  "name": "flatmate-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix Backend run dev",
+    "start": "npm --prefix Backend start",
+    "test": "npm --prefix Backend test"
+  }
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Messages | FlatMate</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+
+    <!-- Existing FlatMate styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+
+    <!-- Chat-specific styles -->
+    <link rel="stylesheet" href="/css/chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/bot.css" />
+</head>
+
+<body>
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <header class="chat-header">
+
+        <div class="chat-header-inner">
+
+            <a href="/" class="chat-brand">
+                <span class="chat-brand-icon">⌂</span>
+                <span>FlatMate</span>
+            </a>
+
+            <a href="/" class="chat-back-link">
+                ← Back to FlatMate
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CHAT APPLICATION
+    ====================================================== -->
+
+    <main class="chat-page">
+
+        <section class="chat-container">
+
+            <!-- =================================================
+                 CONVERSATION SIDEBAR
+            ================================================== -->
+
+            <aside class="conversation-sidebar">
+
+                <div class="conversation-header">
+
+                    <div>
+                        <h1>Messages</h1>
+
+                        <p id="conversation-count">
+                            Loading conversations...
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- Search conversations -->
+
+                <div class="conversation-search">
+
+                    <input
+                        type="text"
+                        id="conversation-search"
+                        placeholder="Search conversations..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- Conversation list -->
+
+                <div
+                    id="conversation-list"
+                    class="conversation-list"
+                >
+
+                    <div class="chat-loading">
+                        <div class="chat-spinner"></div>
+
+                        <p>Loading conversations...</p>
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+            <!-- =================================================
+                 CHAT AREA
+            ================================================== -->
+
+            <section class="chat-main">
+
+                <!-- Empty state -->
+
+                <div
+                    id="chat-empty"
+                    class="chat-empty"
+                >
+
+                    <div class="chat-empty-icon">
+                        💬
+                    </div>
+
+                    <h2>Your Messages</h2>
+
+                    <p>
+                        Select a conversation to start chatting.
+                    </p>
+
+                </div>
+
+
+                <!-- Active conversation -->
+
+                <div
+                    id="chat-active"
+                    class="chat-active hidden"
+                >
+
+                    <!-- =========================================
+                         CHAT TOP BAR
+                    ========================================== -->
+
+                    <div class="chat-topbar">
+
+                        <div class="chat-person">
+
+                            <div
+                                id="chat-avatar"
+                                class="chat-avatar"
+                            >
+                                U
+                            </div>
+
+                            <div class="chat-person-info">
+
+                                <h2 id="chat-person-name">
+                                    User
+                                </h2>
+
+                                <p id="chat-property-name">
+                                    Property
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <a
+                            id="chat-property-link"
+                            href="#"
+                            class="view-property-btn"
+                        >
+                            View Property
+                        </a>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PROPERTY INFORMATION
+                    ========================================== -->
+
+                    <div
+                        id="chat-property-info"
+                        class="chat-property-info"
+                    >
+
+                        <div class="property-info-item">
+
+                            <span class="property-info-label">
+                                Property
+                            </span>
+
+                            <strong id="property-title">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div class="property-info-item">
+
+                            <span class="property-info-label">
+                                Location
+                            </span>
+
+                            <strong id="property-location">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div class="property-info-item">
+
+                            <span class="property-info-label">
+                                Price
+                            </span>
+
+                            <strong id="property-price">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         MESSAGES
+                    ========================================== -->
+
+                    <div
+                        id="messages-container"
+                        class="messages-container"
+                    >
+
+                        <div class="chat-loading">
+
+                            <div class="chat-spinner"></div>
+
+                            <p>Loading messages...</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         MESSAGE COMPOSER
+                    ========================================== -->
+
+                    <form
+                        id="message-form"
+                        class="message-form"
+                    >
+
+                        <textarea
+                            id="message-input"
+                            rows="1"
+                            maxlength="5000"
+                            placeholder="Write a message..."
+                            autocomplete="off"
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            id="send-message-btn"
+                            class="send-message-btn"
+                        >
+                            <span>Send</span>
+                            <span class="send-icon">➤</span>
+                        </button>
+
+                    </form>
+
+
+                    <div class="message-footer">
+
+                        <span>
+                            Press Enter to send
+                        </span>
+
+                        <span id="message-character-count">
+                            0 / 5000
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="/js/config.js"></script>
+
+    <script src="/js/validate.js"></script>
+
+    <script src="/js/chat.js"></script>
+
+    <script src="/js/bot.js"></script>
+
+    <script src="/js/password-toggle.js"></script>
+</body>
+</html>
