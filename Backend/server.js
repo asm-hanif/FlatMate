@@ -529,7 +529,7 @@ async function start() {
        Start Express server.
     */
 
-    app.listen(
+    const server = app.listen(
         PORT,
         () => {
 
@@ -600,6 +600,15 @@ async function start() {
             console.log('');
         }
     );
+
+    server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+            console.error(`✗ Port ${PORT} is already in use. Stop the other FlatMate server or set PORT to another value.`);
+        } else {
+            console.error('✗ FlatMate server failed to listen:', error);
+        }
+        process.exitCode = 1;
+    });
 }
 
 

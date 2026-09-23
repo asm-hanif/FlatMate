@@ -747,8 +747,13 @@ async function deleteAccount(req, res) {
         const media = await executeSql(`SELECT fm.Url FROM dbo.FlatMedia fm INNER JOIN dbo.Flats f ON f.Id=fm.FlatId WHERE f.OwnerId=@id`, [{name:'id',type:sql.Int,value:userId}]);
         const owned = await executeSql(`SELECT AvatarUrl FROM dbo.Users WHERE Id=@id`, [{name:'id',type:sql.Int,value:userId}]);
         await withTransaction(async tx => {
-            await tx.query(`DELETE FROM dbo.ChatMessages WHERE ConversationId IN (SELECT Id FROM dbo.ChatConversations WHERE UserId=@id OR OwnerId=@id)`, [{name:'id',type:sql.Int,value:userId}]);
-            await tx.query(`DELETE FROM dbo.ChatConversations WHERE UserId=@id OR OwnerId=@id`, [{name:'id',type:sql.Int,value:userId}]);
+            // Remove every chat row that can reference this user or one of
+            // their properties before deleting the properties and user.
+            await tx.query(`DELETE FROM dbo.ChatMessages WHERE SenderId=@id OR ConversationId IN (
+                SELECT Id FROM dbo.ChatConversations
+                WHERE UserId=@id OR OwnerId=@id OR FlatId IN (SELECT Id FROM dbo.Flats WHERE OwnerId=@id)
+            )`, [{name:'id',type:sql.Int,value:userId}]);
+            await tx.query(`DELETE FROM dbo.ChatConversations WHERE UserId=@id OR OwnerId=@id OR FlatId IN (SELECT Id FROM dbo.Flats WHERE OwnerId=@id)`, [{name:'id',type:sql.Int,value:userId}]);
             await tx.query(`DELETE FROM dbo.Requests WHERE UserId=@id OR FlatId IN (SELECT Id FROM dbo.Flats WHERE OwnerId=@id)`, [{name:'id',type:sql.Int,value:userId}]);
             await tx.query(`DELETE FROM dbo.Favorites WHERE UserId=@id OR FlatId IN (SELECT Id FROM dbo.Flats WHERE OwnerId=@id)`, [{name:'id',type:sql.Int,value:userId}]);
             await tx.query(`DELETE FROM dbo.PropertyReports WHERE ReporterId=@id OR FlatId IN (SELECT Id FROM dbo.Flats WHERE OwnerId=@id)`, [{name:'id',type:sql.Int,value:userId}]);
@@ -765,7 +770,10 @@ async function deleteAccount(req, res) {
         }
         const avatar = owned[0]?.AvatarUrl;
         if (avatar && String(avatar).startsWith('/uploads/')) { const filePath=path.join(__dirname,'..','..',String(avatar).replace(/^\//,'')); try{if(fs.existsSync(filePath))fs.unlinkSync(filePath);}catch(_){} }
-        req.session.destroy(() => res.clearCookie('connect.sid'));
+        await new Promise((resolve, reject) => {
+            req.session.destroy(error => error ? reject(error) : resolve());
+        });
+        res.clearCookie('connect.sid');
         return res.json({success:true,message:'Your FlatMate account has been permanently deleted.'});
     } catch (err) {
         console.error('Delete account error:', err);
