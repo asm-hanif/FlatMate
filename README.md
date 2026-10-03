@@ -18,7 +18,6 @@ FlatMate/
 │   ├── *.html
 │   ├── css/
 │   └── js/
-│       └── config.js    sets the Backend URL for split deployments (see below)
 └── Backend/            The Node/Express server, database layer and AI model
     ├── server.js
     ├── server/          routes / controllers / middleware / services / db
@@ -29,17 +28,12 @@ FlatMate/
     └── package.json
 ```
 
-Frontend and Backend can run two ways:
-
-- **Together (local development):** Backend serves Frontend itself as static
-  files — one process, one URL, no CORS to think about. This is the default.
-- **Split (production — Render + Vercel):** Backend runs on Render, Frontend
-  is deployed separately on Vercel. `Frontend/js/config.js` is the one file
-  you edit to point the Frontend at the Backend's URL — see "Deploying" below.
+For local development, the Backend serves the Frontend as static files. Run the
+Backend once and open the app at `http://localhost:3000`.
 
 ## Requirements
 - Node.js 18+ (Node 22 recommended)
-- PostgreSQL 14+ (local install, or a managed instance like Render Postgres)
+- PostgreSQL 14+ running locally
 - Optional Gmail App Password for email features
 
 ## Local setup
@@ -52,10 +46,9 @@ Frontend and Backend can run two ways:
    (On Windows, run this from the "SQL Shell (psql)" that ships with the
    installer, or use pgAdmin's "Create Database" dialog instead.)
 
-2. **Configure `Backend/.env`.** A working `.env` is already included,
-   pre-filled to match a default local PostgreSQL install
-   (`PGUSER=postgres`, `PGPASSWORD=123456`, `PGDATABASE=flatmatedb`) — update
-   `PGPASSWORD` if yours differs. See `.env.example` for every option.
+2. **Configure `Backend/.env`.** Set your local PostgreSQL credentials:
+  `PGHOST=localhost`, `PGPORT=5432`, `PGUSER`, `PGPASSWORD`, and
+  `PGDATABASE=flatmatedb`. Keep your `.env` local and out of commits.
 
 3. **Build the tables.** You don't have to do this by hand — the app creates
    every table, index and constraint automatically the first time it starts
@@ -74,56 +67,38 @@ Frontend and Backend can run two ways:
 5. Open http://localhost:3000 — Backend serves the Frontend directly, so
    that's the only URL you need locally.
 
-## Deploying: Backend on Render, Frontend on Vercel
+## Tests
 
-### 1. Render (Backend)
-- New Web Service → connect your repo.
-- **Root Directory:** `Backend`
-- **Build Command:** `npm install`
-- **Start Command:** `npm start`
-- Add a Render PostgreSQL database (New → PostgreSQL), then copy its
-  **Internal Database URL** into the web service's environment as
-  `DATABASE_URL`.
-- Environment variables to set (see `Backend/.env.example` for the full list):
-  `DATABASE_URL`, `SESSION_SECRET`, `NODE_ENV=production`, `APP_BASE_URL`
-  (your Render URL), `FRONTEND_URL` (your Vercel URL — add it after step 2),
-  and the `SMTP_*` variables if you want email working.
-- Uploaded photos/videos are written to Render's local disk, which is
-  **ephemeral** on most plans (wiped on redeploy/restart). For anything
-  beyond a demo, attach a Render Disk to `Backend/uploads`, or swap the
-  upload logic to a cloud bucket (S3, Cloudinary, etc.) — not included here.
+Run commands from the repository root. The unit suite uses no running server
+or database. The API and Selenium suites require the local server and database;
+Selenium also requires Chrome (or another configured Selenium browser).
 
-### 2. Vercel (Frontend)
-- New Project → same repo.
-- **Root Directory:** `Frontend`
-- **Framework Preset:** Other (it's static files — no build step)
-- Deploy. Vercel gives you a URL like `https://flatmate.vercel.app`.
+Start the app in one terminal:
 
-### 3. Connect them
-- In `Frontend/js/config.js`, set:
-  ```js
-  window.FM_CONFIG = {
-      API_BASE_URL: 'https://your-backend.onrender.com'
-  };
-  ```
-  Redeploy the Frontend after this change.
-- Back on Render, set `FRONTEND_URL=https://flatmate.vercel.app` (comma-separate
-  multiple origins, e.g. to also allow a Vercel preview URL) and redeploy the
-  Backend. This is required — without it, the Backend rejects cross-origin
-  requests from your Frontend for security.
+```bash
+npm run dev
+```
 
-That's it — every existing `fetch('/api/...')` call and every uploaded-image
-URL in the Frontend is rewritten automatically at runtime by `config.js`, so
-no other Frontend files need touching when you deploy.
+Then run the suites in another terminal:
+
+```bash
+npm test
+npm --prefix Backend run test:api
+npm --prefix Backend run test:selenium
+```
+
+The API suite creates temporary test accounts and listings, then deactivates
+its test listing. The Selenium suite runs browser workflows against the local
+app; its account-deletion cases are skipped unless `RUN_ACCOUNT_DELETION=true`.
 
 ## Branch workflow
 
 For future updates, use a simple Git flow:
 
-- `main` = stable production-ready branch
+- `main` = stable branch
 - `feature/<short-name>` = new feature work
 - `fix/<short-name>` = bug fixes and patches
-- `hotfix/<short-name>` = urgent production fixes
+- `hotfix/<short-name>` = urgent fixes
 
 Example workflow:
 
@@ -232,4 +207,4 @@ and `server/columnCase.js` for how that compatibility layer works.
 - Property reporting and in-app notifications endpoints.
 - Hidden/expired listing states.
 - Both-mode users can use seeker and owner functionality without separate accounts.
-- Uploaded media remains local for development; use object storage/CDN before production scale.
+- Uploaded media is stored locally under `Backend/uploads/` during development.

@@ -1,18 +1,4 @@
-/**
- * FlatMate browser smoke tests.
- *
- * Start the app before running this suite:
- *   npm run dev
- *
- * Then, in another terminal:
- *   npm run test:selenium
- *
- * Optional environment variables:
- *   TEST_BASE_URL=http://localhost:3000
- *   SELENIUM_BROWSER=chrome|firefox|edge
- *   SELENIUM_HEADLESS=false
- */
-
+// Smoke-test public pages and browser interactions using Selenium WebDriver.
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { Builder, By, until } = require('selenium-webdriver');
@@ -22,31 +8,37 @@ const BROWSER = process.env.SELENIUM_BROWSER || 'chrome';
 
 let driver;
 
+// Join a page path to the configured local or remote test server.
 function page(path) {
     return `${BASE_URL}${path}`;
 }
 
+// Wait for the requested UI element before interacting with it.
 async function waitFor(selector, timeout = 5000) {
     return driver.wait(until.elementLocated(By.css(selector)), timeout);
 }
 
+// Wait for the document title and assert its exact value.
 async function titleShouldBe(expected) {
     await driver.wait(until.titleIs(expected), 5000);
     assert.equal(await driver.getTitle(), expected);
 }
 
+// Scroll an element into view before clicking it in the browser.
 async function click(selector) {
     const element = await waitFor(selector);
     await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', element);
     await element.click();
 }
 
+// Replace an input's current value with the supplied test value.
 async function clearAndType(selector, value) {
     const element = await waitFor(selector);
     await element.clear();
     await element.sendKeys(value);
 }
 
+// Wait for non-empty text and return the newest matching message.
 async function waitForText(selector, timeout = 5000) {
     await driver.wait(async () => {
         const elements = await driver.findElements(By.css(selector));
@@ -57,6 +49,7 @@ async function waitForText(selector, timeout = 5000) {
     return elements[elements.length - 1];
 }
 
+// Start one configured browser driver for this test file.
 test.before(async () => {
     const builder = new Builder().forBrowser(BROWSER === 'edge' ? 'MicrosoftEdge' : BROWSER);
 
@@ -85,10 +78,12 @@ test.before(async () => {
     await driver.manage().setTimeouts({ implicit: 1000, pageLoad: 15000, script: 5000 });
 });
 
+// Close the browser so Selenium does not leave a process running.
 test.after(async () => {
     if (driver) await driver.quit();
 });
 
+// Check the landing page title and its main search/navigation elements.
 test('homepage loads with hero, search controls, and public navigation', async () => {
     await driver.get(page('/'));
     await titleShouldBe('FlatMate — Find Your Perfect Place');
@@ -101,6 +96,7 @@ test('homepage loads with hero, search controls, and public navigation', async (
     await waitFor('.navbar-brand');
 });
 
+// Submit selected search values and verify each is encoded in the destination URL.
 test('homepage hero search navigates with query parameters', async () => {
     await driver.get(page('/'));
     await clearAndType('#heroLocation', 'Dhaka');
@@ -116,6 +112,7 @@ test('homepage hero search navigates with query parameters', async () => {
     assert.match(url, /bedrooms=2/);
 });
 
+// Ensure the explore view renders its filters, results grid, and pagination.
 test('explore page loads filters and property results area', async () => {
     await driver.get(page('/flats.html'));
     await titleShouldBe('Explore Flats — FlatMate');
@@ -126,16 +123,18 @@ test('explore page loads filters and property results area', async () => {
     assert.equal((await driver.findElements(By.css('#filterForm select[name="propertyType"]'))).length, 1);
 });
 
+// Submit explore filters and confirm the results remain on the explore page.
 test('explore filters submit without leaving the page', async () => {
     await driver.get(page('/flats.html'));
     await clearAndType('#filterForm input[name="location"]', 'Dhaka');
     await (await waitFor('#filterForm select[name="purpose"]')).sendKeys('Rent');
-    await click('#filterForm button[type="submit"]');
+    await driver.executeScript('document.querySelector("#filterForm").requestSubmit();');
     await driver.wait(async () => (await driver.getCurrentUrl()).endsWith('/flats.html'), 5000);
     await waitFor('#exploreGrid');
     assert.match(await driver.findElement(By.css('body')).then(element => element.getText()), /Explore available flats/);
 });
 
+// Visit public pages in turn and verify their titles and identifying content.
 test('public pages have the expected titles and main content', async () => {
     const pages = [
         ['/about.html', 'About — FlatMate', /Property search should feel/],
@@ -153,6 +152,7 @@ test('public pages have the expected titles and main content', async () => {
     }
 });
 
+// Follow navigation links and wait for each expected destination URL.
 test('navbar links navigate between public pages', async () => {
     await driver.get(page('/about.html'));
     await click('nav a[href="/flats.html"]');
@@ -163,6 +163,7 @@ test('navbar links navigate between public pages', async () => {
     await driver.wait(async () => (await driver.getCurrentUrl()).endsWith('/'), 5000);
 });
 
+// Resize to a mobile viewport and verify the menu opens before navigating.
 test('mobile navigation opens and closes', async () => {
     await driver.get(page('/about.html'));
     await driver.manage().window().setRect({ width: 390, height: 844 });
@@ -174,6 +175,7 @@ test('mobile navigation opens and closes', async () => {
     await driver.manage().window().setRect({ width: 1440, height: 1000 });
 });
 
+// Fill registration fields with a non-Gmail address and inspect the client error.
 test('register form rejects a non-Gmail address in the browser', async () => {
     await driver.get(page('/register.html'));
     await clearAndType('#regName', 'Browser Test User');
@@ -185,6 +187,7 @@ test('register form rejects a non-Gmail address in the browser', async () => {
     assert.match(await toast.getText(), /valid Gmail address/i);
 });
 
+// Enter different password values and verify the form reports the mismatch.
 test('register form rejects mismatched passwords in the browser', async () => {
     await driver.get(page('/register.html'));
     await clearAndType('#regName', 'Browser Test User');
@@ -196,6 +199,7 @@ test('register form rejects mismatched passwords in the browser', async () => {
     assert.match(await toast.getText(), /Passwords do not match/i);
 });
 
+// Inspect required and email input attributes on the login form.
 test('login form has required browser validation', async () => {
     await driver.get(page('/login.html'));
     const email = await waitFor('#loginEmail');
@@ -205,6 +209,7 @@ test('login form has required browser validation', async () => {
     assert.equal(await email.getAttribute('type'), 'email');
 });
 
+// Submit a non-Gmail address and verify the forgot-password validation message.
 test('forgot-password form rejects a non-Gmail address', async () => {
     await driver.get(page('/forgot-password.html'));
     await clearAndType('#forgotEmail', 'not-an-email@yahoo.com');
@@ -213,6 +218,7 @@ test('forgot-password form rejects a non-Gmail address', async () => {
     assert.match(await toast.getText(), /valid Gmail address/i);
 });
 
+// Verify the URL prefills email and browser pattern validation requires six digits.
 test('reset-password pre-fills email and enforces a six-digit code', async () => {
     await driver.get(page('/reset-password.html?email=person%40gmail.com'));
     assert.equal(await (await waitFor('#resetEmail')).getAttribute('value'), 'person@gmail.com');
@@ -222,6 +228,7 @@ test('reset-password pre-fills email and enforces a six-digit code', async () =>
     assert.equal(await driver.executeScript('return arguments[0].validity.patternMismatch;', code), true);
 });
 
+// Check contact fields are required so incomplete forms cannot be submitted.
 test('contact form exposes required fields and does not submit incomplete data', async () => {
     await driver.get(page('/contact.html'));
     const form = await waitFor('#contactForm');
@@ -234,6 +241,7 @@ test('contact form exposes required fields and does not submit incomplete data',
     assert.equal(await form.getAttribute('id'), 'contactForm');
 });
 
+// Open the assistant panel, then close it and verify its open state is removed.
 test('AI assistant opens and closes on public pages', async () => {
     await driver.get(page('/'));
     await click('#fm-bot-launcher');

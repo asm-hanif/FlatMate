@@ -1,30 +1,18 @@
-/**
- * FlatMate — live API integration tests
- *
- * Unlike the unit tests (tests/unit/, run with `npm test`), this hits a
- * REAL running server over HTTP, using Node's built-in fetch — no test
- * framework or extra dependency required.
- *
- * Usage:
- *   1. Start the server in one terminal:   npm run dev
- *   2. In another terminal:                npm run test:api
- *
- * It creates throwaway test accounts/listings using a random suffix each
- * run, so it's safe to run against a real dev database repeatedly.
- */
-
+// Exercise real HTTP behavior against a running FlatMate server and database.
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
-const RUN_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const RUN_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); // Generate unique test accounts for each run.
 
 let passed = 0;
 let failed = 0;
 const failures = [];
 
+// Count and print a successful integration check.
 function pass(label) {
     passed++;
     console.log(`  \x1b[32m✓\x1b[0m ${label}`);
 }
 
+// Record a failure so the suite can finish and summarize every problem.
 function fail(label, detail) {
     failed++;
     failures.push({ label, detail });
@@ -32,6 +20,7 @@ function fail(label, detail) {
     if (detail) console.log(`    ${detail}`);
 }
 
+// Run one check and capture its error without stopping later checks.
 async function check(label, fn) {
     try {
         await fn();
@@ -41,13 +30,15 @@ async function check(label, fn) {
     }
 }
 
+// Throw a readable error when an expected API condition is not met.
 function assert(condition, message) {
     if (!condition) throw new Error(message || 'Assertion failed');
 }
 
 // A per-run cookie jar (this server uses cookie-based sessions).
-let cookies = {};
+let cookies = {}; // Keep the current test user's session cookies between API calls.
 
+// Save response cookies so later requests can authenticate as the same user.
 function rememberCookies(res) {
     const raw = res.headers.getSetCookie ? res.headers.getSetCookie() : [res.headers.get('set-cookie')].filter(Boolean);
     for (const c of raw) {
@@ -57,10 +48,12 @@ function rememberCookies(res) {
     }
 }
 
+// Format the saved cookie pairs as an HTTP Cookie header.
 function cookieHeader() {
     return Object.entries(cookies).map(([k, v]) => `${k}=${v}`).join('; ');
 }
 
+// Send JSON or form requests and return the status and parsed response body.
 async function api(method, path, body, isForm) {
     const headers = {};
     if (cookieHeader()) headers['Cookie'] = cookieHeader();
@@ -89,12 +82,13 @@ async function run() {
 
     const ownerEmail = `test.owner.${RUN_ID}@gmail.com`;
     const userEmail = `test.user.${RUN_ID}@gmail.com`;
-    const password = 'TestPass123'; // meets the 6-16, upper+lower+digit rule
+    const password = 'TestPass123'; // Meets the configured length, case, and digit rules.
 
     let ownerId, userId, flatId, mediaIdToRemove;
 
     // ---------------- Health ----------------
     console.log('Health & connectivity');
+    // Verify the server and its database report healthy before exercising APIs.
     await check('GET /api/health returns success', async () => {
         const r = await api('GET', '/api/health');
         assert(r.status === 200, `expected 200, got ${r.status}`);
@@ -105,6 +99,7 @@ async function run() {
     // ---------------- Auth: registration ----------------
     console.log('\nRegistration & validation rules');
 
+    // Confirm registration blocks email providers outside Gmail.
     await check('Registration rejects non-Gmail address', async () => {
         const r = await api('POST', '/api/auth/register', {
             name: 'Bad Email', email: `x.${RUN_ID}@yahoo.com`, password, role: 'User'
@@ -112,6 +107,7 @@ async function run() {
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Confirm registration applies the uppercase-password requirement.
     await check('Registration rejects weak password (no uppercase)', async () => {
         const r = await api('POST', '/api/auth/register', {
             name: 'Weak Pw', email: `weak.${RUN_ID}@gmail.com`, password: 'abcdef1', role: 'User'
@@ -119,6 +115,7 @@ async function run() {
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Confirm registration enforces the maximum password length.
     await check('Registration rejects password over 16 chars', async () => {
         const r = await api('POST', '/api/auth/register', {
             name: 'Too Long', email: `long.${RUN_ID}@gmail.com`, password: 'Abcdef123456789XY', role: 'User'
@@ -126,6 +123,7 @@ async function run() {
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Register an owner and verify registration creates an authenticated session.
     await check('Owner registration succeeds and auto-logs-in', async () => {
         cookies = {}; // fresh session for this account
         const r = await api('POST', '/api/auth/register', {
@@ -141,6 +139,7 @@ async function run() {
 
     const ownerCookies = { ...cookies };
 
+    // Register a separate seeker account for permission and favorite checks.
     await check('User (seeker) registration succeeds', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/register', {
@@ -155,18 +154,21 @@ async function run() {
     // ---------------- Auth: login/logout ----------------
     console.log('\nLogin / logout / session');
 
+    // Verify valid credentials establish a login session.
     await check('Login with correct credentials succeeds', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/login', { email: ownerEmail, password });
         assert(r.status === 200, `expected 200, got ${r.status}: ${JSON.stringify(r.data)}`);
     });
 
+    // Verify invalid credentials are rejected without authenticating.
     await check('Login with wrong password is rejected', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/login', { email: ownerEmail, password: 'WrongPass1' });
         assert(r.status === 401 || r.status === 400, `expected 400/401, got ${r.status}`);
     });
 
+    // Verify logout invalidates the saved session cookie.
     await check('Logout clears the session', async () => {
         cookies = { ...ownerCookies };
         await api('POST', '/api/auth/logout');
@@ -182,6 +184,7 @@ async function run() {
     // ---------------- Flat creation (the bug that was just fixed) ----------------
     console.log('\nProperty creation (Add Property)');
 
+    // Ensure a seeker role cannot create an owner listing.
     await check('Non-owner cannot create a listing', async () => {
         cookies = { ...userCookies };
         const form = new URLSearchParams({ Title: 'Should Fail', Purpose: 'Rent', PropertyType: 'Apartment', Price: '10000' });
@@ -189,6 +192,7 @@ async function run() {
         assert(r.status === 403, `expected 403, got ${r.status}`);
     });
 
+    // Cover minimal listing creation and guard against duplicate INSERT columns.
     await check('Owner CAN create a listing with only required fields (regression test for the duplicate-column bug)', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({
@@ -208,6 +212,7 @@ async function run() {
         flatId = data.id;
     });
 
+    // Submit every listing field to verify full form parsing and persistence.
     await check('Owner CAN create a listing with the FULL property summary + amenities', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({
@@ -243,6 +248,7 @@ async function run() {
         assert(r.status === 201, `expected 201, got ${r.status}: ${JSON.stringify(data)}`);
     });
 
+    // Ensure missing required values produce a validation response, not a server error.
     await check('Creating a listing without required fields is rejected with 400 (not a 500)', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({ Description: 'Missing everything required' });
@@ -257,12 +263,14 @@ async function run() {
     // ---------------- Flat retrieval ----------------
     console.log('\nProperty retrieval');
 
+    // Verify the public listing endpoint includes the newly created property.
     await check('GET /api/flats returns an array including the new listing', async () => {
         const r = await api('GET', '/api/flats');
         assert(Array.isArray(r.data), 'expected an array');
         assert(r.data.some(f => f.Id === flatId), 'expected the newly created flat in the list');
     });
 
+    // Verify property detail includes saved fields, media, and owner information.
     await check('GET /api/flats/:id returns full detail with property-summary fields intact', async () => {
         const r = await api('GET', `/api/flats/${flatId}`);
         assert(r.status === 200, `expected 200, got ${r.status}`);
@@ -272,6 +280,7 @@ async function run() {
         assert(r.data.owner && r.data.owner.Email === ownerEmail, 'expected owner info attached');
     });
 
+    // Confirm a missing property ID returns not found.
     await check('GET /api/flats/:id for a non-existent flat returns 404', async () => {
         const r = await api('GET', '/api/flats/999999999');
         assert(r.status === 404, `expected 404, got ${r.status}`);
@@ -280,6 +289,7 @@ async function run() {
     // ---------------- Flat editing: every field editable ----------------
     console.log('\nProperty editing (all fields, including amenities)');
 
+    // Update several listing fields together and read them back from the API.
     await check('Owner can update every property-summary field at once', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({
@@ -306,6 +316,7 @@ async function run() {
         assert(check2.data.Facing === 'North-East', `expected Facing=North-East, got ${check2.data.Facing}`);
     });
 
+    // Save a checked amenity and verify its stored bit value is enabled.
     await check('Owner can toggle an amenity on', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({ SwimmingPool: 'true' });
@@ -319,6 +330,7 @@ async function run() {
         assert(Number(check2.data.SwimmingPool) === 1, 'expected SwimmingPool amenity to be on');
     });
 
+    // Save an unchecked amenity and verify its stored bit value is cleared.
     await check('Owner can toggle an amenity back off', async () => {
         cookies = { ...ownerSessionCookies };
         const form = new URLSearchParams({ SwimmingPool: 'false' });
@@ -332,6 +344,7 @@ async function run() {
         assert(Number(check2.data.SwimmingPool) === 0, 'expected SwimmingPool amenity to be off');
     });
 
+    // Ensure ownership checks reject listing edits from a different user.
     await check('Non-owner cannot edit someone else\'s listing', async () => {
         cookies = { ...userCookies };
         cookies = {};
@@ -348,9 +361,8 @@ async function run() {
     // ---------------- Media: image upload & removal ----------------
     console.log('\nPhoto & video management (add + remove)');
 
+    // Build a minimal valid PNG accepted by the upload file-type check.
     function tinyPngBlob() {
-        // A minimal valid 1x1 transparent PNG, just enough for multer/
-        // the file-type filter to accept it as a real image.
         const base64 =
             'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
         const bytes = Buffer.from(base64, 'base64');
@@ -359,6 +371,7 @@ async function run() {
 
     let uploadedMediaIds = [];
 
+    // Upload two images and verify both are added to the listing media.
     await check('Owner can add new images to an existing listing', async () => {
         cookies = { ...ownerSessionCookies };
 
@@ -385,6 +398,7 @@ async function run() {
             .map(m => m.Id);
     });
 
+    // Request the stored image URL to confirm uploaded files are served.
     await check('Newly uploaded image is reachable at its URL', async () => {
         const before = await api('GET', `/api/flats/${flatId}`);
         const lastImage = before.data.media.filter(m => m.MediaType === 'image').slice(-1)[0];
@@ -394,6 +408,7 @@ async function run() {
         assert(r.status === 200, `expected the uploaded image to be servable, got ${r.status} for ${lastImage.Url}`);
     });
 
+    // Remove one media record and verify other listing media remains intact.
     await check('Owner can remove one specific existing image (others remain)', async () => {
         cookies = { ...ownerSessionCookies };
 
@@ -416,6 +431,7 @@ async function run() {
         assert(!after.data.media.some(m => m.Id === idToRemove), 'removed image id should no longer be present');
     });
 
+    // Confirm requests for removed or missing upload paths return not found.
     await check('Removed image file is no longer servable (actually deleted from disk)', async () => {
         const before = await api('GET', `/api/flats/${flatId}`);
         const remainingUrls = new Set(before.data.media.map(m => m.Url));
@@ -428,6 +444,7 @@ async function run() {
         assert(r.status === 404, `expected 404 for a non-existent upload, got ${r.status}`);
     });
 
+    // Combine media removal and upload to verify both operations share one update.
     await check('Owner can add a new image AND remove an old one in the same request', async () => {
         cookies = { ...ownerSessionCookies };
 
@@ -452,6 +469,7 @@ async function run() {
         assert(!after.data.media.some(m => m.Id === idToRemove), 'removed image id should no longer be present');
     });
 
+    // Ensure a different user cannot remove media from the owner's listing.
     await check('A non-owner cannot remove another owner\'s listing images', async () => {
         cookies = {};
         await api('POST', '/api/auth/login', { email: userEmail, password });
@@ -474,18 +492,21 @@ async function run() {
     // ---------------- Availability status ----------------
     console.log('\nAvailability status');
 
+    // Allow the owner to change a listing's availability state.
     await check('Owner can mark property as Rented', async () => {
         cookies = { ...ownerSessionCookies };
         const r = await api('PUT', `/api/flats/${flatId}/availability-status`, { status: 'Rented' });
         assert(r.status === 200, `expected 200, got ${r.status}: ${JSON.stringify(r.data)}`);
     });
 
+    // Reject statuses outside the supported availability values.
     await check('Availability status rejects an invalid value', async () => {
         cookies = { ...ownerSessionCookies };
         const r = await api('PUT', `/api/flats/${flatId}/availability-status`, { status: 'NotARealStatus' });
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Restore the listing to the available state after the status check.
     await check('Owner can mark property back to Available', async () => {
         cookies = { ...ownerSessionCookies };
         const r = await api('PUT', `/api/flats/${flatId}/availability-status`, { status: 'Available' });
@@ -495,6 +516,7 @@ async function run() {
     // ---------------- Favorites ----------------
     console.log('\nFavorites');
 
+    // Add a listing to the seeker's saved properties.
     await check('User can favorite a property', async () => {
         cookies = {};
         await api('POST', '/api/auth/login', { email: userEmail, password });
@@ -502,21 +524,25 @@ async function run() {
         assert(r.status === 201, `expected 201, got ${r.status}: ${JSON.stringify(r.data)}`);
     });
 
+    // Read the favorite status endpoint after saving the listing.
     await check('Favorite status reflects true after favoriting', async () => {
         const r = await api('GET', `/api/favorites/${flatId}/status`);
         assert(r.data.favorited === true, 'expected favorited:true');
     });
 
+    // Repeat the save request to verify duplicate favorites are handled safely.
     await check('Favoriting the same property twice does not error (idempotent)', async () => {
         const r = await api('POST', `/api/favorites/${flatId}`);
         assert(r.status === 201, `expected 201, got ${r.status}`);
     });
 
+    // Verify the saved listing appears in the user's favorites collection.
     await check('Listing favorites includes the property', async () => {
         const r = await api('GET', '/api/favorites');
         assert(r.data.favorites.some(f => f.Id === flatId), 'expected flat in favorites list');
     });
 
+    // Remove the saved listing and verify its status changes to false.
     await check('User can unfavorite a property', async () => {
         const r = await api('DELETE', `/api/favorites/${flatId}`);
         assert(r.status === 200, `expected 200, got ${r.status}`);
@@ -527,12 +553,14 @@ async function run() {
     // ---------------- AI Bot ----------------
     console.log('\nAI Assistant (Mira)');
 
+    // Confirm the assistant metadata endpoint returns its amenity catalog.
     await check('GET /api/bot/meta returns reference data', async () => {
         const r = await api('GET', '/api/bot/meta');
         assert(r.status === 200, `expected 200, got ${r.status}`);
         assert(Array.isArray(r.data.amenities) && r.data.amenities.length > 0, 'expected amenities list');
     });
 
+    // Restrict price advice to an authenticated owner role.
     await check('Price suggestion is denied to non-owners', async () => {
         cookies = {};
         await api('POST', '/api/auth/login', { email: userEmail, password });
@@ -540,6 +568,7 @@ async function run() {
         assert(r.status === 403, `expected 403, got ${r.status}`);
     });
 
+    // Request owner price advice and require a positive estimate in the response.
     await check('Price suggestion works for owners', async () => {
         cookies = {};
         await api('POST', '/api/auth/login', { email: ownerEmail, password });
@@ -551,6 +580,7 @@ async function run() {
         assert(r.data.suggestion && r.data.suggestion.estimate > 0, 'expected a positive price estimate');
     });
 
+    // Verify any authenticated account can receive a flat-finder result list.
     await check('Flat-finder works for any logged-in role', async () => {
         const r = await api('POST', '/api/bot/suggest-flats', { purpose: 'Rent', city: 'Dhaka', budgetMax: 100000 });
         assert(r.status === 200, `expected 200, got ${r.status}: ${JSON.stringify(r.data)}`);
@@ -562,6 +592,7 @@ async function run() {
     console.log('  Note: full happy-path (correct code -> new password) needs a real inbox,');
     console.log('  so only checks that don\'t require reading the actual email are automated here.');
 
+    // Confirm reset requests for existing accounts return a generic response.
     await check('Requesting a code for a registered email returns the generic success message', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/forgot-password', { email: ownerEmail });
@@ -569,6 +600,7 @@ async function run() {
         assert(r.data.success === true, 'expected success:true');
     });
 
+    // Keep reset responses identical for unknown emails to prevent enumeration.
     await check('Requesting a code for a NON-existent email returns the SAME generic message (no email enumeration)', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/forgot-password', { email: `nobody.${RUN_ID}@gmail.com` });
@@ -576,24 +608,28 @@ async function run() {
         assert(r.data.success === true, 'expected success:true even for a non-existent email');
     });
 
+    // Reject reset requests that omit the account email.
     await check('Forgot-password rejects a missing email', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/forgot-password', {});
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Require a verification code before accepting a password reset.
     await check('Reset-password rejects a missing code', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/reset-password', { email: ownerEmail, newPassword: 'NewPass123' });
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Apply normal password rules before accepting a reset password.
     await check('Reset-password rejects a weak new password even with a well-formed (wrong) code', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/reset-password', { email: ownerEmail, code: '000000', newPassword: 'weak' });
         assert(r.status === 400, `expected 400, got ${r.status}`);
     });
 
+    // Reject an incorrect code with a generic invalid-or-expired response.
     await check('Reset-password rejects an incorrect 6-digit code with a generic error (no email enumeration)', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/reset-password', { email: ownerEmail, code: '000000', newPassword: 'NewPass123' });
@@ -601,6 +637,7 @@ async function run() {
         assert(/invalid|expired/i.test(r.data.error || ''), `expected an invalid/expired message, got: ${r.data.error}`);
     });
 
+    // Return the same reset error for unknown accounts and incorrect codes.
     await check('Reset-password for a non-existent email gives the SAME error as a wrong code (no email enumeration)', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/reset-password', { email: `nobody.${RUN_ID}@gmail.com`, code: '123456', newPassword: 'NewPass123' });
@@ -608,6 +645,7 @@ async function run() {
         assert(/invalid|expired/i.test(r.data.error || ''), `expected an invalid/expired message, got: ${r.data.error}`);
     });
 
+    // Verify failed reset attempts leave the current password unchanged.
     await check('Original password still works (a failed reset attempt must not change it)', async () => {
         cookies = {};
         const r = await api('POST', '/api/auth/login', { email: ownerEmail, password });
@@ -617,12 +655,14 @@ async function run() {
     // ---------------- Cleanup ----------------
     console.log('\nCleanup');
 
+    // Deactivate the temporary listing so it is not left publicly available.
     await check('Owner can delete (deactivate) their test listing', async () => {
         cookies = { ...ownerSessionCookies };
         const r = await api('DELETE', `/api/flats/${flatId}`);
         assert(r.status === 200, `expected 200, got ${r.status}`);
     });
 
+    // Confirm deactivated test data is filtered from public listings.
     await check('Deactivated listing no longer appears in the public list', async () => {
         const r = await api('GET', '/api/flats');
         assert(!r.data.some(f => f.Id === flatId), 'expected deactivated flat to be excluded from public listing');
