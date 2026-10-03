@@ -69,22 +69,41 @@ Backend once and open the app at `http://localhost:3000`.
 
 ## Tests
 
-Run commands from the repository root. The unit suite uses no running server
-or database. The API and Selenium suites require the local server and database;
-Selenium also requires Chrome (or another configured Selenium browser).
+The unit tests need no running server or database. API integration and Selenium
+tests need the local server and database; Selenium also needs Chrome or another
+configured browser.
 
-Start the app in one terminal:
+Start the app in one terminal from the repository root:
 
 ```bash
 npm run dev
 ```
 
-Then run the suites in another terminal:
+Run all suites from the repository root in another terminal:
 
 ```bash
 npm test
 npm --prefix Backend run test:api
 npm --prefix Backend run test:selenium
+```
+
+To run individual test files directly, first change to `Backend`:
+
+```bash
+cd Backend
+
+# Unit tests
+node --test tests/unit/validators.test.js
+node --test tests/unit/flatController.test.js
+
+# API integration test
+node tests/integration/api.test.js
+
+# Selenium browser test
+node --test tests/selenium/website.test.js
+
+# Selenium end-to-end workflow
+node --test tests/selenium/e2e-90.test.js
 ```
 
 The API suite creates temporary test accounts and listings, then deactivates
